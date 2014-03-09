@@ -112,6 +112,8 @@ $(function(){
 				previous_content = html;
 				$n.html(html);
 				position();
+				setTimeout(position);
+				setTimeout(position);
 				return $n;
 			}else{
 				return $n.html();
