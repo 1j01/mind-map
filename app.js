@@ -7,7 +7,7 @@ $(function(){
 	
 	function load(){
 		function load_node(node){
-			$Node(node).html(node._);
+			$Node(node).content(node._);
 			if(node.c){
 				$.each(node.c, load_node);
 			}
@@ -15,7 +15,8 @@ $(function(){
 		load_doc(doc_name, function(doc){
 			if(doc){
 				$.map(doc.nodes, load_node);
-			}else{
+			}
+			if($(".n").length === 0){
 				$Node({
 					x: innerWidth / 2,
 					y: innerHeight / 3,
@@ -31,7 +32,7 @@ $(function(){
 			var node = {
 				x: $node.x,
 				y: $node.y,
-				_: $node.html()
+				_: $node.content()
 			};
 			if($node.$children){
 				node.c = $.map($node.$children, serialize);
@@ -68,7 +69,7 @@ $(function(){
 	}
 	function $Node(o){
 		cleanup();
-		
+		var previous_content = "";
 		var $n = $last = $("<div contenteditable class='n'></div>")
 		.appendTo("body")
 		.css({
@@ -91,18 +92,36 @@ $(function(){
 					y: $n.y + 50,
 				}).focus();
 			}
-			save(doc_name);
 		})
-		.on("keydown keyup keypress", function(){
+		.on("keydown keyup keypress mousemove mouseup", function(){
 			position();
 			setTimeout(position);
+			
+			var content = $n.content();
+			if(previous_content !== content){
+				save();
+			}
+			previous_content = content;
 		})
 		.on("mousedown", function(e){
 			e.stopPropagation();
 		});
 		
+		$n.content = function(html){
+			if(html){
+				previous_content = html;
+				$n.html(html);
+				position();
+				return $n;
+			}else{
+				return $n.html();
+			}
+		};
 		$n.isEmpty = function(){
-			return $n.html().match(/^\s*$/);
+			if($n.find("img, audio, video, iframe").length){
+				return false;
+			}
+			return $n.text().match(/^\s*$/);
 		};
 		
 		$n.x = o.x;
