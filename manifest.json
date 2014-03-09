@@ -1,0 +1,21 @@
+{
+	"manifest_version": 2,
+	
+	"name": "mind map",
+	"description": "structure your ideas elegantly",
+	"version": "0.1",
+	
+	"icons": {
+		//"16": "images/icons/16.png",
+		//"48": "images/icons/48.png",
+		//"128": "images/icons/128.png"
+	},
+	
+	"app": {
+		"background": {
+			"scripts": ["chrome-app.js"]
+		}
+	},
+	
+	"permissions": ["fullscreen", "storage"]
+}

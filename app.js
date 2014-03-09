@@ -8,10 +8,13 @@ $(function(){
 	function load(){
 		function load_node(node){
 			$Node(node).html(node._);
+			if(node.c){
+				$.each(node.c, load_node);
+			}
 		}
 		load_doc(doc_name, function(doc){
 			if(doc){
-				$.each(doc.nodes, load_node);
+				$.map(doc.nodes, load_node);
 			}else{
 				$Node({
 					x: innerWidth / 2,
@@ -22,6 +25,9 @@ $(function(){
 	}
 	function save(){
 		function serialize($node){
+			if($node.isEmpty()){
+				return;
+			}
 			var node = {
 				x: $node.x,
 				y: $node.y,
@@ -51,11 +57,19 @@ $(function(){
 		});
 	});
 	
-	var $empty;
+	var $last;
+	function cleanup(){
+		if($last && $last.isEmpty()){
+			var idx = top_level_nodes.indexOf($last);
+			top_level_nodes.splice(idx, 1);
+			$last.remove();
+		}
+		$last = null;
+	}
 	function $Node(o){
-		$empty && $empty.remove();
+		cleanup();
 		
-		var $n = $empty = $("<div contenteditable class='n'></div>")
+		var $n = $last = $("<div contenteditable class='n'></div>")
 		.appendTo("body")
 		.css({
 			position: "absolute",
@@ -64,48 +78,46 @@ $(function(){
 			fontSize: "2em"
 		})
 		.on("keydown", function(e){
-			if($n.html().match(/^\s*$/)){
-				$empty = $n;
-			}else{
-				$empty = null;
+			if($n.isEmpty()){
+				if($last && $last !== $n){
+					cleanup();
+				}
+				$last = $n;
 			}
 			if(e.keyCode === 13 && !e.shiftKey){
 				e.preventDefault();
 				$Node({
-					x: o.x + Math.random()*100-50,
-					y: o.y + 50,
+					x: $n.x + Math.random()*100-50,
+					y: $n.y + 50,
 				}).focus();
 			}
 			save(doc_name);
 		})
 		.on("keydown keyup keypress", function(){
-			center();
-			setTimeout(center);
+			position();
+			setTimeout(position);
 		})
 		.on("mousedown", function(e){
 			e.stopPropagation();
 		});
 		
-		center(true);
+		$n.isEmpty = function(){
+			return $n.html().match(/^\s*$/);
+		};
+		
+		$n.x = o.x;
+		$n.y = o.y;
+		position(true);
 		
 		top_level_nodes.push($n);
 		
 		return $n;
 		
-		function center(instantly){
-			if(instantly){
-				$n.css({
-					left: o.x - $n.outerWidth()/2,
-					top: o.y - $n.outerHeight()/2,
-				});
-			}else{
-				$n.css({
-					animation: "left .2s ease-in-out, top .2s ease-in-out",
-					"-webkit-animation": "left 2s ease-in-out, top 2s ease-in-out",
-					left: o.x - $n.outerWidth()/2,
-					top: o.y - $n.outerHeight()/2,
-				});
-			}
+		function position(instantly){
+			$n.css({
+				left: $n.x - $n.outerWidth()/2,
+				top: $n.y - $n.outerHeight()/2,
+			});
 		}
 	}
 	
