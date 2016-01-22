@@ -68,34 +68,8 @@ $(function(){
 	
 	var $last;
 	
-	// function cleanup(){
-	// 	// setTimeout(function(){
-	// 	// if($n.isEmpty()){
-	// 	// 	if($last && $last !== $n){
-	// 			if($last && $last.isEmpty() && !$last.is(document.activeElement)){
-	// 				console.log($last, document.activeElement);
-	// 				var idx = nodes.indexOf($last);
-	// 				nodes.splice(idx, 1);
-	// 				$last.remove();
-	// 			}
-	// 			$last = null;
-	// 	// 	}
-	// 	// }
-	// 	// }, 10);
-	// }
-	
 	function $Node(o, fb_n){
 		fb_n = fb_n || fb_nodes.push(o);
-		
-		// if($last && $last.isEmpty()){
-		// 	var idx = nodes.indexOf($last);
-		// 	nodes.splice(idx, 1);
-		// 	$last.remove();
-		// }
-		
-		// cleanup();
-		
-		// setTimeout(cleanup, 5);
 		
 		if($last && $last.isEmpty()){
 			var idx = nodes.indexOf($last);
@@ -103,16 +77,14 @@ $(function(){
 			$last.remove();
 		}
 		function cleanup(){
-			// if($n.isEmpty()){
-				if($last && $last !== $n){
-					if($last && $last.isEmpty()){
-						var idx = nodes.indexOf($last);
-						nodes.splice(idx, 1);
-						$last.remove();
-					}
-					$last = null;
+			if($last && $last !== $n){
+				if($last && $last.isEmpty()){
+					var idx = nodes.indexOf($last);
+					nodes.splice(idx, 1);
+					$last.remove();
 				}
-			// }
+				$last = null;
+			}
 		}
 		
 		var previous_content = "";
@@ -157,22 +129,6 @@ $(function(){
 		.on("focus", function(e){
 			cleanup();
 			$last = $n;
-		})
-		.on("blur", function(e){
-			// cleanup();
-			// $last = $n;
-			// console.log(e);
-			// if($n.isEmpty()){
-			// 	var selection = document.getSelection();
-			// 	var node = selection.focusNode;
-			// 	console.log(selection, node, node.parentNode, node.parentElement, selection.containsNode($n[0]));
-			// 	if(node){
-			// 		console.log($n, $last, document.activeElement);
-			// 		var idx = nodes.indexOf($n);
-			// 		nodes.splice(idx, 1);
-			// 		$n.remove();
-			// 	}
-			// }
 		});
 		
 		$n.fb = fb_n;
@@ -181,8 +137,6 @@ $(function(){
 				previous_content = html;
 				$n.html() !== html && $n.html(html);
 				position();
-				// setTimeout(position);
-				// setTimeout(position);
 				return $n;
 			}else{
 				return $n.html();
@@ -217,10 +171,6 @@ $(function(){
 		fb_n.on('value', function(snapshot){
 			var v = snapshot.val();
 			if(v){
-				// console.log(v, v._ == undefined);
-				// if(v._ == undefined){
-				// 	snapshot.ref().remove();
-				// }else{
 				$n.x = v.x;
 				$n.y = v.y;
 				if(v._){
@@ -228,16 +178,11 @@ $(function(){
 					$n.restore();
 					position();
 				}
-				// }
-				// $n.show();
 				if(v._){
 					fb_n.onDisconnect().cancel();
 				}else{
 					fb_n.onDisconnect().remove()
 				}
-			}else{
-				//if($n !== $last)
-				// $n.hide();
 			}
 		});
 		
