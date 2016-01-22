@@ -85,10 +85,10 @@ $(function(){
 		save_doc(doc_name);
 	}
 	
-	$("body").on("mousedown", function(e){
+	$(window).on("mousedown", function(e){
 		var $n = $Node({
-			x: e.clientX,
-			y: e.clientY,
+			x: e.pageX,
+			y: e.pageY,
 		}).focus();
 		
 		setTimeout(function(e){
