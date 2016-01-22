@@ -5,20 +5,21 @@ $(function(){
 	var doc_name = location.search || "document";
 	
 	var fb = new Firebase("https://mind-map.firebaseio.com/");
-	fb.child("stats/v2views").transaction(function(val){
-		return (val||0) + 1;
-	});
+	if(!(location.hostname.match(/localhost|127\.0\.0\.1/) || location.protocol == "file:")){
+		fb.child("stats/v2_views").transaction(function(val){
+			return (val || 0) + 1;
+		});
+		if(doc_name !== "document"){
+			fb.child("stats/v2_non_default_views").transaction(function(val){
+				return (val || 0) + 1;
+			});
+		}
+	}
 	var fb_doc = fb.child("documents").child(doc_name);
 	var fb_nodes = fb_doc.child("nodes");
+	var disable_child_added = false;
 	fb_nodes.on('child_added', function(snapshot){
-		// FIXME!
-		var already_got_that_one = false;
-		$.each(nodes, function(i, node){
-			if(node.fb.key() === snapshot.ref().key()){
-				already_got_that_one = true;
-			}
-		});
-		if(!already_got_that_one){
+		if(!disable_child_added){
 			$Node(snapshot.val(), snapshot.ref());
 		}
 	});
@@ -69,7 +70,9 @@ $(function(){
 	var $last;
 	
 	function $Node(o, fb_n){
+		disable_child_added = true;
 		fb_n = fb_n || fb_nodes.push(o);
+		disable_child_added = false;
 		
 		if($last && $last.isEmpty()){
 			var idx = nodes.indexOf($last);
