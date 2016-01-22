@@ -10,24 +10,6 @@ $(function(){
 	});
 	var fb_doc = fb.child("documents").child(doc_name);
 	var fb_nodes = fb_doc.child("nodes");
-	/*fb_doc.once("value", function(snapshot){
-		var doc = snapshot.val();
-		function load_node(node, i){
-			$Node(node, fb_nodes.child(i)).content(node._);
-			//if(node.c){
-			//	$.each(node.c, load_node);
-			//}
-		}
-		if(doc && doc.nodes){
-			$.map(doc.nodes, load_node);
-		}
-		if($(".n").length === 0){
-			$Node({
-				x: innerWidth / 2,
-				y: innerHeight / 3,
-			}).focus();
-		}
-	});*/
 	fb_nodes.on('child_added', function(snapshot){
 		var already_got_that_one = false;
 		$.each(top_level_nodes, function(i, node){
@@ -39,11 +21,20 @@ $(function(){
 			$Node(snapshot.val(), snapshot.ref());
 		}
 	});
+	fb_doc.once("value", function(snapshot){
+		if($(".n:not(:empty)").length === 0){
+			$Node({
+				x: innerWidth / 2,
+				y: innerHeight / 3,
+			}).focus();
+		}
+	});
 	
 	
 	//load();
 	
 	function load(){
+		// not currently used
 		function load_node(node){
 			$Node(node).content(node._);
 			if(node.c){
@@ -54,14 +45,16 @@ $(function(){
 			if(doc){
 				$.map(doc.nodes, load_node);
 			}
-			if($(".n").length === 0){
+			if($(".n:not(:empty)").length === 0){
 				$Node({
 					x: innerWidth / 2,
 					y: innerHeight / 3,
 				}).focus();
 			}
 		});
+		// not currently used
 	}
+	
 	function save(){
 		function serialize($node){
 			if($node.isEmpty()){
