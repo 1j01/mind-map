@@ -14,7 +14,7 @@ $(function(){
 		// FIXME!
 		var already_got_that_one = false;
 		$.each(nodes, function(i, node){
-			if(node.fb.name() === snapshot.ref().name()){
+			if(node.fb.key() === snapshot.ref().key()){
 				already_got_that_one = true;
 			}
 		});
