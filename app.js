@@ -1,18 +1,19 @@
 $(function(){
 	
-	var top_level_nodes = [];
+	var nodes = [];
 	
 	var doc_name = location.search || "document";
 	
 	var fb = new Firebase("https://mind-map.firebaseio.com/");
-	fb.child("stats/v").transaction(function(val){
+	fb.child("stats/v2views").transaction(function(val){
 		return (val||0) + 1;
 	});
 	var fb_doc = fb.child("documents").child(doc_name);
 	var fb_nodes = fb_doc.child("nodes");
 	fb_nodes.on('child_added', function(snapshot){
+		// FIXME!
 		var already_got_that_one = false;
-		$.each(top_level_nodes, function(i, node){
+		$.each(nodes, function(i, node){
 			if(node.fb.name() === snapshot.ref().name()){
 				already_got_that_one = true;
 			}
@@ -30,31 +31,6 @@ $(function(){
 		}
 	});
 	
-	
-	//load();
-	
-	function load(){
-		// not currently used
-		function load_node(node){
-			$Node(node).content(node._);
-			if(node.c){
-				$.each(node.c, load_node);
-			}
-		}
-		load_doc(doc_name, function(doc){
-			if(doc){
-				$.map(doc.nodes, load_node);
-			}
-			if($(".n:not(:empty)").length === 0){
-				$Node({
-					x: innerWidth / 2,
-					y: innerHeight / 3,
-				}).focus();
-			}
-		});
-		// not currently used
-	}
-	
 	function save(){
 		function serialize($node){
 			if($node.isEmpty()){
@@ -65,20 +41,21 @@ $(function(){
 				y: $node.y,
 				_: $node.content()
 			};
-			if($node.$children){
-				node.c = $.map($node.$children, serialize);
-			}
 			return node;
 		}
 		//serialize the document
 		documents[doc_name] = 
 		documents[doc_name] || {};
-		documents[doc_name].nodes = $.map(top_level_nodes, serialize);
+		documents[doc_name].nodes = $.map(nodes, serialize);
 		//save
 		save_doc(doc_name);
 	}
 	
 	$(window).on("mousedown", function(e){
+		if($(e.target).closest(".n").length){
+			return;
+		}
+		
 		var $n = $Node({
 			x: e.pageX,
 			y: e.pageY,
@@ -90,25 +67,52 @@ $(function(){
 	});
 	
 	var $last;
+	
+	// function cleanup(){
+	// 	// setTimeout(function(){
+	// 	// if($n.isEmpty()){
+	// 	// 	if($last && $last !== $n){
+	// 			if($last && $last.isEmpty() && !$last.is(document.activeElement)){
+	// 				console.log($last, document.activeElement);
+	// 				var idx = nodes.indexOf($last);
+	// 				nodes.splice(idx, 1);
+	// 				$last.remove();
+	// 			}
+	// 			$last = null;
+	// 	// 	}
+	// 	// }
+	// 	// }, 10);
+	// }
+	
 	function $Node(o, fb_n){
 		fb_n = fb_n || fb_nodes.push(o);
 		
+		// if($last && $last.isEmpty()){
+		// 	var idx = nodes.indexOf($last);
+		// 	nodes.splice(idx, 1);
+		// 	$last.remove();
+		// }
+		
+		// cleanup();
+		
+		// setTimeout(cleanup, 5);
+		
 		if($last && $last.isEmpty()){
-			var idx = top_level_nodes.indexOf($last);
-			top_level_nodes.splice(idx, 1);
+			var idx = nodes.indexOf($last);
+			nodes.splice(idx, 1);
 			$last.remove();
 		}
 		function cleanup(){
-			if($n.isEmpty()){
+			// if($n.isEmpty()){
 				if($last && $last !== $n){
 					if($last && $last.isEmpty()){
-						var idx = top_level_nodes.indexOf($last);
-						top_level_nodes.splice(idx, 1);
+						var idx = nodes.indexOf($last);
+						nodes.splice(idx, 1);
 						$last.remove();
 					}
 					$last = null;
 				}
-			}
+			// }
 		}
 		
 		var previous_content = "";
@@ -147,9 +151,28 @@ $(function(){
 			previous_content = content;
 		})
 		.on("mousedown", function(e){
-			e.stopPropagation();
 			cleanup();
 			$last = $n;
+		})
+		.on("focus", function(e){
+			cleanup();
+			$last = $n;
+		})
+		.on("blur", function(e){
+			// cleanup();
+			// $last = $n;
+			// console.log(e);
+			// if($n.isEmpty()){
+			// 	var selection = document.getSelection();
+			// 	var node = selection.focusNode;
+			// 	console.log(selection, node, node.parentNode, node.parentElement, selection.containsNode($n[0]));
+			// 	if(node){
+			// 		console.log($n, $last, document.activeElement);
+			// 		var idx = nodes.indexOf($n);
+			// 		nodes.splice(idx, 1);
+			// 		$n.remove();
+			// 	}
+			// }
 		});
 		
 		$n.fb = fb_n;
@@ -158,8 +181,8 @@ $(function(){
 				previous_content = html;
 				$n.html() !== html && $n.html(html);
 				position();
-				setTimeout(position);
-				setTimeout(position);
+				// setTimeout(position);
+				// setTimeout(position);
 				return $n;
 			}else{
 				return $n.html();
@@ -171,16 +194,19 @@ $(function(){
 			}
 			return $n.text().match(/^\s*$/);
 		};
-		$n.rem = function(){
-			$n.remove();
+		$n.remove = function(){
+			$n.css({opacity: 0, pointerEvents: "none"});
 			fb_n.remove();
 		};
+		$n.restore = function(){
+			$n.css({opacity: 1, pointerEvents: "auto"});
+		};
+		
+		nodes.push($n);
 		
 		$n.x = o.x;
 		$n.y = o.y;
-		position(true);
-		
-		top_level_nodes.push($n);
+		position();
 		
 		fb_n.once('value', function(snapshot){
 			var v = snapshot.val();
@@ -191,20 +217,33 @@ $(function(){
 		fb_n.on('value', function(snapshot){
 			var v = snapshot.val();
 			if(v){
+				// console.log(v, v._ == undefined);
+				// if(v._ == undefined){
+				// 	snapshot.ref().remove();
+				// }else{
 				$n.x = v.x;
 				$n.y = v.y;
-				$n.content(v._);
-				position(true);
-				$n.show();
+				if(v._){
+					$n.content(v._);
+					$n.restore();
+					position();
+				}
+				// }
+				// $n.show();
+				if(v._){
+					fb_n.onDisconnect().cancel();
+				}else{
+					fb_n.onDisconnect().remove()
+				}
 			}else{
 				//if($n !== $last)
-				$n.hide();
+				// $n.hide();
 			}
 		});
 		
 		return $n;
 		
-		function position(instantly){
+		function position(){
 			$n.css({
 				left: $n.x - $n.outerWidth()/2,
 				top: $n.y - $n.outerHeight()/2,
