@@ -2,15 +2,14 @@
 doc_name = location.search or 'document'
 fb = new Firebase('https://mind-map.firebaseio.com/')
 
-disable_child_added = off
-
 $last = null
+$nodes_by_key = {}
 
 $Node = (data, fb_n)->
 	
-	disable_child_added = on
 	fb_n ?= fb_nodes.push(data)
-	disable_child_added = off
+	
+	return if $nodes_by_key[fb_n.key()]
 	
 	cleanup = ->
 		if $last and $last isnt $node
@@ -50,12 +49,10 @@ $Node = (data, fb_n)->
 			setTimeout position
 			content = $node.content()
 			if previous_content isnt content
-				disable_child_added = on
 				fb_n.set
 					x: data.x
 					y: data.y
 					_: content
-				disable_child_added = off
 			previous_content = content
 		.on 'mousedown', (e)->
 			cleanup()
@@ -64,7 +61,7 @@ $Node = (data, fb_n)->
 			cleanup()
 			$last = $node
 	
-	$node.fb = fb_n
+	$nodes_by_key[fb_n.key()] = $node
 	
 	$node.content = (html)->
 		if typeof html is 'string'
@@ -114,7 +111,7 @@ fb_doc = fb.child('documents').child(doc_name)
 fb_nodes = fb_doc.child('nodes')
 
 fb_nodes.on 'child_added', (snapshot)->
-	unless disable_child_added
+	setTimeout ->
 		$Node snapshot.val(), snapshot.ref()
 
 fb_doc.once 'value', (snapshot)->
@@ -125,12 +122,14 @@ fb_doc.once 'value', (snapshot)->
 		).focus()
 
 $(window).on 'mousedown', (e)->
+	# FIXME: breaks scrollbars
+	# to fix, listen on a document content element inside the scroller
 	unless $(e.target).closest('.node').length
 		e.preventDefault()
-		$node = $Node
+		$Node(
 			x: e.pageX
 			y: e.pageY
-		$node.focus()
+		).focus()
 
 if location.hostname.match(/localhost|127\.0\.0\.1/) or location.protocol is 'file:'
 	if localStorage.debug
