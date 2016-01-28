@@ -17,5 +17,5 @@
 		}
 	},
 	
-	"permissions": ["fullscreen", "storage"]
+	"permissions": ["fullscreen"]
 }

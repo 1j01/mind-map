@@ -2,23 +2,8 @@
 doc_name = location.search or 'document'
 fb = new Firebase('https://mind-map.firebaseio.com/')
 
-disable_child_added = false
+disable_child_added = off
 
-save = ->
-	serialize = ($node)->
-		return if $node.isEmpty()
-		node = 
-			x: $node.x
-			y: $node.y
-			_: $node.content()
-		node
-
-	documents[doc_name] = documents[doc_name] or {}
-	documents[doc_name].nodes = $.map(nodes, serialize)
-	
-	save_doc doc_name
-
-nodes = []
 $last = null
 
 $Node = (o, fb_n)->
@@ -34,9 +19,9 @@ $Node = (o, fb_n)->
 			left: $n.x - ($n.outerWidth() / 2)
 			top: $n.y - ($n.outerHeight() / 2)
 	
-	disable_child_added = yes
-	fb_n = fb_n or fb_nodes.push(o)
-	disable_child_added = no
+	disable_child_added = on
+	fb_n ?= fb_nodes.push(o)
+	disable_child_added = off
 	
 	if $last and $last.isEmpty()
 		$last.remove()
@@ -64,13 +49,12 @@ $Node = (o, fb_n)->
 			setTimeout position
 			content = $n.content()
 			if previous_content != content
-				save()
-				disable_child_added = true
+				disable_child_added = on
 				fb_n.set
 					x: $n.x
 					y: $n.y
 					_: content
-				disable_child_added = false
+				disable_child_added = off
 			previous_content = content
 		.on 'mousedown', (e)->
 			cleanup()
@@ -100,18 +84,12 @@ $Node = (o, fb_n)->
 			opacity: 0
 			pointerEvents: 'none'
 		fb_n.remove()
-		idx = nodes.indexOf($n)
-		if idx >= 0
-			nodes.splice idx, 1
 	
 	$n.restore = ->
 		$n.css
 			opacity: 1
 			pointerEvents: 'auto'
-		if nodes.indexOf($n) is -1
-			nodes.push $n
 	
-	nodes.push $n
 	$n.x = o.x
 	$n.y = o.y
 	position()
@@ -140,7 +118,7 @@ fb_nodes.on 'child_added', (snapshot)->
 		$Node snapshot.val(), snapshot.ref()
 
 fb_doc.once 'value', (snapshot)->
-	if $('.n:not(:empty)').length == 0
+	unless $('.n:not(:empty)').length > 0
 		$Node(
 			x: innerWidth / 2
 			y: innerHeight / 3
