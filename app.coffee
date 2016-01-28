@@ -28,7 +28,7 @@ $Node = (data, fb_n)->
 	previous_content = ''
 	
 	$node = $last = $('<div contenteditable class="node"></div>')
-		.appendTo('body')
+		.appendTo('#document-content')
 		.css
 			position: 'absolute'
 			padding: '5px'
@@ -121,9 +121,7 @@ fb_doc.once 'value', (snapshot)->
 			y: innerHeight / 3
 		).focus()
 
-$(window).on 'mousedown', (e)->
-	# FIXME: breaks scrollbars
-	# to fix, listen on a document content element inside the scroller
+$('#document-content').on 'mousedown', (e)->
 	unless $(e.target).closest('.node').length
 		e.preventDefault()
 		$Node(
