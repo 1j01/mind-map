@@ -44,6 +44,7 @@ $Node = (data, fb_n)->
 					x: data.x + Math.random() * 100 - 50
 					y: data.y + 50
 				).focus()
+		# there probably shouldn't be "mousemove" here and should probably be some other input events
 		.on 'keydown keyup keypress mousemove mouseup', ->
 			position()
 			setTimeout position
@@ -80,20 +81,18 @@ $Node = (data, fb_n)->
 		$node.text().match(/^\s*$/)?
 	
 	$node.remove = ->
+		fb_n.remove()
+	
+	$node.hide = ->
 		$node.css
 			opacity: 0
 			pointerEvents: 'none'
-		fb_n.remove()
 	
-	$node.restore = ->
+	$node.show = ->
 		$node.css
 			opacity: 1
 			pointerEvents: 'auto'
 	
-	position()
-	
-	fb_n.once 'value', (snapshot)->
-		fb_n.set data unless snapshot.val()
 	fb_n.on 'value', (snapshot)->
 		value = snapshot.val()
 		if value
@@ -101,11 +100,12 @@ $Node = (data, fb_n)->
 		else
 			data._ = ""
 		$node.content data._
+		position()
 		if data._
-			$node.restore()
-			position()
+			$node.show()
 			fb_n.onDisconnect().cancel()
 		else
+			$node.hide() unless value?
 			fb_n.onDisconnect().remove()
 	
 	$node
@@ -126,14 +126,16 @@ fb_doc.once 'value', (snapshot)->
 
 $(window).on 'mousedown', (e)->
 	unless $(e.target).closest('.node').length
+		e.preventDefault()
 		$node = $Node
 			x: e.pageX
 			y: e.pageY
 		$node.focus()
-		setTimeout (e)->
-			$node.focus()
 
-unless location.hostname.match(/localhost|127\.0\.0\.1/) or location.protocol is 'file:'
+if location.hostname.match(/localhost|127\.0\.0\.1/) or location.protocol is 'file:'
+	if localStorage.debug
+		document.body.classList.add('debug')
+else
 	fb.child('stats/v2_views').transaction (val)-> (val or 0) + 1
 	unless doc_name is 'document'
 		fb.child('stats/v2_non_default_views').transaction (val)-> (val or 0) + 1
