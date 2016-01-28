@@ -3,7 +3,7 @@
 
 Map your mind without ugly boxes.
 
-*This is **not** a good mind mapping application (yet).*
+*This is not a good mind mapping application (yet).*
 
 ### (Maybe "Minmap"?)
 

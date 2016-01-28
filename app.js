@@ -75,15 +75,11 @@ $(function(){
 		disable_child_added = false;
 		
 		if($last && $last.isEmpty()){
-			var idx = nodes.indexOf($last);
-			nodes.splice(idx, 1);
 			$last.remove();
 		}
 		function cleanup(){
 			if($last && $last !== $n){
 				if($last && $last.isEmpty()){
-					var idx = nodes.indexOf($last);
-					nodes.splice(idx, 1);
 					$last.remove();
 				}
 				$last = null;
@@ -117,11 +113,9 @@ $(function(){
 			var content = $n.content();
 			if(previous_content !== content){
 				save();
-				if(content){
-					fb_n.set({x:$n.x, y:$n.y, _:content});
-				}else{
-					fb_n.remove();
-				}
+				disable_child_added = true;
+				fb_n.set({x:$n.x, y:$n.y, _:content});
+				disable_child_added = false;
 			}
 			previous_content = content;
 		})
@@ -154,9 +148,16 @@ $(function(){
 		$n.remove = function(){
 			$n.css({opacity: 0, pointerEvents: "none"});
 			fb_n.remove();
+			var idx = nodes.indexOf($n);
+			if(idx >= 0){
+				nodes.splice(idx, 1);
+			}
 		};
 		$n.restore = function(){
 			$n.css({opacity: 1, pointerEvents: "auto"});
+			if(nodes.indexOf($n) === -1){
+				nodes.push($n);
+			}
 		};
 		
 		nodes.push($n);
@@ -180,8 +181,6 @@ $(function(){
 					$n.content(v._);
 					$n.restore();
 					position();
-				}
-				if(v._){
 					fb_n.onDisconnect().cancel();
 				}else{
 					fb_n.onDisconnect().remove()
