@@ -13,22 +13,22 @@ $Node = (data, fb_n)->
 	disable_child_added = off
 	
 	cleanup = ->
-		if $last and $last isnt $n
+		if $last and $last isnt $node
 			if $last and $last.isEmpty()
 				$last.remove()
 			$last = null
 	
 	position = ->
-		$n.css
-			left: data.x - ($n.outerWidth() / 2)
-			top: data.y - ($n.outerHeight() / 2)
+		$node.css
+			left: data.x - ($node.outerWidth() / 2)
+			top: data.y - ($node.outerHeight() / 2)
 	
 	if $last and $last.isEmpty()
 		$last.remove()
 	
 	previous_content = ''
 	
-	$n = $last = $('<div contenteditable class="n"></div>')
+	$node = $last = $('<div contenteditable class="node"></div>')
 		.appendTo('body')
 		.css
 			position: 'absolute'
@@ -37,8 +37,8 @@ $Node = (data, fb_n)->
 			fontSize: '2em'
 		.on 'keydown', (e)->
 			cleanup()
-			$last = $n
-			if e.keyCode is 13 and !e.shiftKey
+			$last = $node
+			if e.keyCode is 13 and not e.shiftKey
 				e.preventDefault()
 				$Node(
 					x: data.x + Math.random() * 100 - 50
@@ -47,7 +47,7 @@ $Node = (data, fb_n)->
 		.on 'keydown keyup keypress mousemove mouseup', ->
 			position()
 			setTimeout position
-			content = $n.content()
+			content = $node.content()
 			if previous_content isnt content
 				disable_child_added = on
 				fb_n.set
@@ -58,35 +58,35 @@ $Node = (data, fb_n)->
 			previous_content = content
 		.on 'mousedown', (e)->
 			cleanup()
-			$last = $n
+			$last = $node
 		.on 'focus', (e)->
 			cleanup()
-			$last = $n
+			$last = $node
 	
-	$n.fb = fb_n
+	$node.fb = fb_n
 	
-	$n.content = (html)->
+	$node.content = (html)->
 		if typeof html is 'string'
 			previous_content = html
-			unless $n.html() is html
-				$n.html(html)
+			unless $node.html() is html
+				$node.html(html)
 			position()
-			$n
+			$node
 		else
-			$n.html()
+			$node.html()
 	
-	$n.isEmpty = ->
-		return no if $n.find('img, audio, video, iframe').length
-		$n.text().match(/^\s*$/)?
+	$node.isEmpty = ->
+		return no if $node.find('img, audio, video, iframe').length
+		$node.text().match(/^\s*$/)?
 	
-	$n.remove = ->
-		$n.css
+	$node.remove = ->
+		$node.css
 			opacity: 0
 			pointerEvents: 'none'
 		fb_n.remove()
 	
-	$n.restore = ->
-		$n.css
+	$node.restore = ->
+		$node.css
 			opacity: 1
 			pointerEvents: 'auto'
 	
@@ -100,15 +100,15 @@ $Node = (data, fb_n)->
 			data = value
 		else
 			data._ = ""
-		$n.content data._
+		$node.content data._
 		if data._
-			$n.restore()
+			$node.restore()
 			position()
 			fb_n.onDisconnect().cancel()
 		else
 			fb_n.onDisconnect().remove()
 	
-	$n
+	$node
 
 fb_doc = fb.child('documents').child(doc_name)
 fb_nodes = fb_doc.child('nodes')
@@ -118,20 +118,20 @@ fb_nodes.on 'child_added', (snapshot)->
 		$Node snapshot.val(), snapshot.ref()
 
 fb_doc.once 'value', (snapshot)->
-	unless $('.n:not(:empty)').length > 0
+	unless $('.node:not(:empty)').length
 		$Node(
 			x: innerWidth / 2
 			y: innerHeight / 3
 		).focus()
 
 $(window).on 'mousedown', (e)->
-	return if $(e.target).closest('.n').length
-	$n = $Node
-		x: e.pageX
-		y: e.pageY
-	$n.focus()
-	setTimeout (e)->
-		$n.focus()
+	unless $(e.target).closest('.node').length
+		$node = $Node
+			x: e.pageX
+			y: e.pageY
+		$node.focus()
+		setTimeout (e)->
+			$node.focus()
 
 unless location.hostname.match(/localhost|127\.0\.0\.1/) or location.protocol is 'file:'
 	fb.child('stats/v2_views').transaction (val)-> (val or 0) + 1
