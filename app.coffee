@@ -6,22 +6,22 @@ disable_child_added = off
 
 $last = null
 
-$Node = (o, fb_n)->
+$Node = (data, fb_n)->
+	
+	disable_child_added = on
+	fb_n ?= fb_nodes.push(data)
+	disable_child_added = off
 	
 	cleanup = ->
-		if $last and $last != $n
+		if $last and $last isnt $n
 			if $last and $last.isEmpty()
 				$last.remove()
 			$last = null
 	
 	position = ->
 		$n.css
-			left: $n.x - ($n.outerWidth() / 2)
-			top: $n.y - ($n.outerHeight() / 2)
-	
-	disable_child_added = on
-	fb_n ?= fb_nodes.push(o)
-	disable_child_added = off
+			left: data.x - ($n.outerWidth() / 2)
+			top: data.y - ($n.outerHeight() / 2)
 	
 	if $last and $last.isEmpty()
 		$last.remove()
@@ -41,18 +41,18 @@ $Node = (o, fb_n)->
 			if e.keyCode is 13 and !e.shiftKey
 				e.preventDefault()
 				$Node(
-					x: $n.x + Math.random() * 100 - 50
-					y: $n.y + 50
+					x: data.x + Math.random() * 100 - 50
+					y: data.y + 50
 				).focus()
 		.on 'keydown keyup keypress mousemove mouseup', ->
 			position()
 			setTimeout position
 			content = $n.content()
-			if previous_content != content
+			if previous_content isnt content
 				disable_child_added = on
 				fb_n.set
-					x: $n.x
-					y: $n.y
+					x: data.x
+					y: data.y
 					_: content
 				disable_child_added = off
 			previous_content = content
@@ -90,24 +90,24 @@ $Node = (o, fb_n)->
 			opacity: 1
 			pointerEvents: 'auto'
 	
-	$n.x = o.x
-	$n.y = o.y
 	position()
+	
 	fb_n.once 'value', (snapshot)->
-		v = snapshot.val()
-		fb_n.set o unless v
+		fb_n.set data unless snapshot.val()
 	fb_n.on 'value', (snapshot)->
-		v = snapshot.val()
-		if v
-			$n.x = v.x
-			$n.y = v.y
-			if v._
-				$n.content v._
-				$n.restore()
-				position()
-				fb_n.onDisconnect().cancel()
-			else
-				fb_n.onDisconnect().remove()
+		value = snapshot.val()
+		if value
+			data = value
+		else
+			data._ = ""
+		$n.content data._
+		if data._
+			$n.restore()
+			position()
+			fb_n.onDisconnect().cancel()
+		else
+			fb_n.onDisconnect().remove()
+	
 	$n
 
 fb_doc = fb.child('documents').child(doc_name)
