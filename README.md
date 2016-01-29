@@ -21,7 +21,9 @@ Less distracting UI means a stronger focus on content.
 	* Bold, underline (maybe), italics, strikethrough
 	* Links (pasting plain, creating from existing text, editing existing links...)
 	* Images (drag and drop to "upload" (or upload))
-	* Probably should use something better than `contenteditable`
+* Prevent XSS
+* Use something better than `contenteditable`
+	* Still needs to carry undos/redos between nodes
 * Subtle blobby highlight around nodes
 * Connections
 	* Add text
@@ -35,6 +37,5 @@ Less distracting UI means a stronger focus on content.
 * Themes
 * Mobile
 * User presence
-* Prevent XSS
 
 [app]: http://1j01.github.io/mind-map/?mind-map

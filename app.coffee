@@ -32,8 +32,6 @@ $Node = (data, fb_n)->
 		.css
 			position: 'absolute'
 			padding: '5px'
-			outline: 'none'
-			fontSize: '2em'
 		.on 'keydown', (e)->
 			cleanup()
 			$last = $node
@@ -87,8 +85,8 @@ $Node = (data, fb_n)->
 	
 	$node.show = ->
 		$node.css
-			opacity: 1
-			pointerEvents: 'auto'
+			opacity: ''
+			pointerEvents: ''
 	
 	fb_n.on 'value', (snapshot)->
 		value = snapshot.val()
@@ -115,6 +113,7 @@ fb_nodes.on 'child_added', (snapshot)->
 		$Node snapshot.val(), snapshot.ref()
 
 fb_doc.once 'value', (snapshot)->
+	# FIXME: needs setTimeout now because of the above one
 	unless $('.node:not(:empty)').length
 		$Node(
 			x: innerWidth / 2
@@ -122,12 +121,16 @@ fb_doc.once 'value', (snapshot)->
 		).focus()
 
 $('#document-content').on 'mousedown', (e)->
+	# TODO: enable MMB scrolling
 	unless $(e.target).closest('.node').length
 		e.preventDefault()
 		$Node(
 			x: e.pageX
 			y: e.pageY
 		).focus()
+
+$('header').on 'click', (e)->
+	alert('Nothing in the header does anything yet')
 
 if location.hostname.match(/localhost|127\.0\.0\.1/) or location.protocol is 'file:'
 	if localStorage.debug

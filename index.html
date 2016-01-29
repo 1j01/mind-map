@@ -5,7 +5,12 @@
 		<title>Mind Map</title>
 		<style>
 			html,
+			body {
+				/*overflow: hidden;*/
+			}
+			html,
 			body,
+			#document-content-scroller,
 			#document-content {
 				width: 100%;
 				height: 100%;
@@ -20,7 +25,12 @@
 				color: rgb(97, 68, 11);
 				font-family: Helvetica;
 				/*cursor: text?*/
+				overflow: auto;
 			}
+			#document-content-scroller {
+				overflow: auto;
+			}
+			/*
 			#notif {
 				position: fixed;
 				right: 10px;
@@ -29,14 +39,77 @@
 				padding: 10px;
 				pointer-events: none;
 			}
+			*/
 			.error {
 				background: rgba(255,0,0,0.5);
 			}
 			.success {
 				background: rgba(0,255,25,0.5);
 			}
+			.node {
+				outline: none;
+				font-size: 2em;
+			}
 			.debug .node {
 				background: rgba(255, 255, 0, 0.3);
+			}
+			header {
+				position: fixed;
+				z-index: 1;
+				top: 0;
+				left: 0;
+				right: 0;
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				background: white;
+				border-bottom: 1px solid rgba(128, 128, 128, 0.5);
+			}
+			#document-name {
+				flex: 1;
+				font-size: 1.8rem;
+			}
+			button,
+			#document-name {
+				padding: 0.5rem;
+				border: 0;
+				background: none;
+			}
+			button {
+				border-radius: 2px;
+				font-size: 1.2rem;
+			}
+			button:hover,
+			button:focus {
+				background: rgba(0, 0, 0, 0.1);
+			}
+			button:active {
+				background: rgba(0, 0, 0, 0.15);
+			}
+			#login {
+				margin: 0 0.3rem;
+				background: rgb(0, 154, 255);
+				color: white;
+				cursor: pointer;
+			}
+			#controls > button {
+				font-family: serif;
+				font-size: 0;
+			}
+			#controls > button::first-letter {
+				font-size: 1.3rem;
+			}
+			#bold {
+				font-weight: bold;
+			}
+			#italic {
+				font-style: italic;
+			}
+			#underline {
+				text-decoration: underline;
+			}
+			#strikethrough {
+				text-decoration: line-through;
 			}
 		</style>
 		<script src="lib/jquery.js"></script>
@@ -45,6 +118,13 @@
 		<script src="app.coffee" type="text/coffeescript"></script>
 	</head>
 	<body>
+		<header>
+			<input type="text" id="document-name" placeholder="Document name">
+			<div id="controls">
+				<button id="bold">Bold</button><button id="italic">Italic</button><button id="underline">Underline</button><button id="strikethrough">Strikethrough</button>
+			</div>
+			<button id="login">Login</button>
+		</header>
 		<main id="document-content"></main>
 	</body>
 </html>
