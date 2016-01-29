@@ -13,6 +13,9 @@ Less distracting UI means a stronger focus on content.
 ### TODO
 
 * Infinite scrolling
+	* FIXME: Work around horrible glitchiness in chrome
+	* FIXME: Clicking (creating a node) outside of #document-content scrolls
+	* FIXME: Generally doesn't really work
 * Structure
 	* Traversing up/down, left/right
 	* Collapsing/expanding

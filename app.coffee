@@ -121,14 +121,66 @@ fb_doc.once 'value', (snapshot)->
 		# What about when two people open up a new document?
 		# Should we focus an existing sole empty node?
 
-$('#document-content').on 'mousedown', (e)->
-	# TODO: enable MMB scrolling
+$doc_content = $('#document-content')
+
+drag_start_offset = x: 0, y: 0
+end_drag_velocity = vx: 0, vy: 0
+view_offset =
+	x: 0, y: 0
+	vx: 0, vy: 0
+	animating: no
+	start_animating: ->
+		unless view_offset.animating
+			view_offset.animate()
+	animate: ->
+		# console.log "animate"
+		view_offset.x += view_offset.vx
+		view_offset.y += view_offset.vy
+		view_offset.vx *= 0.8
+		view_offset.vy *= 0.8
+		if Math.abs(view_offset.vx) > 0.001 or Math.abs(view_offset.vy) > 0.001
+			requestAnimationFrame view_offset.animate
+			view_offset.animating = yes
+		else
+			view_offset.animating = no
+		$doc_content.css
+			transform: "translate(#{view_offset.x}px, #{view_offset.y}px)"
+			# transform: "translate3d(#{view_offset.x}px, #{view_offset.y}px, 0px)"
+
+# $(window).on 'scroll', (e)->
+# 	e.preventDefault()
+	# document.body.scrollTop = 0
+	# $("*")
+	# 	.scrollTop 0
+	# 	.scrollLeft 0
+$('#document-background').on 'mousedown', (e)->
 	unless $(e.target).closest('.node').length
 		e.preventDefault()
-		$Node(
-			x: e.pageX
-			y: e.pageY
-		).focus()
+		unless e.button is 1 # MMB
+			$Node(
+				x: e.pageX - view_offset.x
+				y: e.pageY - view_offset.y
+			).focus()
+		view_offset.animate()
+		drag_start_offset.x = view_offset.x - e.pageX
+		drag_start_offset.y = view_offset.y - e.pageY
+		end_drag_velocity.vx = 0
+		end_drag_velocity.vy = 0
+		$(window).on 'mousemove', mousemove = (e)->
+			prev_view_offset_x = view_offset.x
+			prev_view_offset_y = view_offset.y
+			view_offset.x = e.pageX + drag_start_offset.x
+			view_offset.y = e.pageY + drag_start_offset.y
+			end_drag_velocity.vx = view_offset.x - prev_view_offset_x
+			end_drag_velocity.vy = view_offset.y - prev_view_offset_y
+			view_offset.animate()
+		$(window).on 'mouseup', mouseup = (e)->
+			$(window).off 'mousemove', mousemove
+			$(window).off 'mouseup', mouseup
+			unless e.button is 2 # RMB
+				view_offset.vx = end_drag_velocity.vx
+				view_offset.vy = end_drag_velocity.vy
+				view_offset.animate()
 
 fb.onAuth (auth_data)->
 	if auth_data
