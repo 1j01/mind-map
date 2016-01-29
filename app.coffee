@@ -130,8 +130,24 @@ $('#document-content').on 'mousedown', (e)->
 			y: e.pageY
 		).focus()
 
+fb.onAuth (auth_data)->
+	if auth_data
+		$('#login').hide()
+		$('#logged-in').show()
+		$('#user-name').text auth_data.google.displayName
+	else
+		$('#logged-in').hide()
+		$('#login').show()
+
 $('#login').on 'click', (e)->
-	alert('Login is not implemented yet')
+	fb.authWithOAuthPopup "google", (err, auth_data)->
+		if err
+			console.log "Login failed", err
+		else
+			console.log "Authenticated successfully with payload:", auth_data
+
+$('#logout').on 'click', (e)->
+	fb.unauth()
 
 $doc_title = $('#document-title')
 fb_doc_title = fb_doc.child('title')

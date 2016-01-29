@@ -5,10 +5,6 @@
 		<title>Mind Map</title>
 		<style>
 			html,
-			body {
-				/*overflow: hidden;*/
-			}
-			html,
 			body,
 			#document-content-scroller,
 			#document-content {
@@ -19,11 +15,11 @@
 				padding: 0;
 				background: white;
 				color: black;
+				font-family: Helvetica, sans-serif;
 			}
 			#document-content {
 				background-color: rgba(255, 251, 242, 0.4);
 				color: rgb(97, 68, 11);
-				font-family: Helvetica;
 				/*cursor: text?*/
 				overflow: auto;
 			}
@@ -92,8 +88,12 @@
 			button:active {
 				background: rgba(0, 0, 0, 0.15);
 			}
-			#login {
+			#login,
+			#logged-in {
 				margin: 0 0.3rem;
+			}
+			#login,
+			#logout {
 				background: rgb(0, 154, 255);
 				color: white;
 				cursor: pointer;
@@ -130,6 +130,10 @@
 				<button id="bold">Bold</button><button id="italic">Italic</button><button id="underline">Underline</button><button id="strikethrough">Strikethrough</button>
 			</div>
 			<button id="login">Login</button>
+			<div id="logged-in">
+				<span id="user-name"></span>
+				<button id="logout">Logout</button>
+			</div>
 		</header>
 		<main id="document-content"></main>
 	</body>
