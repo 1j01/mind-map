@@ -109,16 +109,20 @@ fb_doc = fb.child('documents').child(doc_name)
 fb_nodes = fb_doc.child('nodes')
 
 fb_nodes.on 'child_added', (snapshot)->
+	# setTimeout needed for deduplication logic
 	setTimeout ->
 		$Node snapshot.val(), snapshot.ref()
 
 fb_doc.once 'value', (snapshot)->
-	# FIXME: needs setTimeout now because of the above one
-	unless $('.node:not(:empty)').length
-		$Node(
-			x: innerWidth / 2
-			y: innerHeight / 3
-		).focus()
+	# setTimeout needed because of the above one
+	setTimeout ->
+		unless $('.node:not(:empty)').length
+			$Node(
+				x: innerWidth / 2
+				y: innerHeight / 3
+			).focus()
+		# What about when two people open up a new document?
+		# Should we focus an existing sole empty node?
 
 $('#document-content').on 'mousedown', (e)->
 	# TODO: enable MMB scrolling
