@@ -61,6 +61,8 @@ $Node = (data, fb_n)->
 	
 	$nodes_by_key[fb_n.key()] = $node
 	
+	$node.reposition = position
+	
 	$node.content = (html)->
 		if typeof html is 'string'
 			previous_content = html
@@ -129,8 +131,27 @@ $('#document-content').on 'mousedown', (e)->
 			y: e.pageY
 		).focus()
 
-$('header').on 'click', (e)->
-	alert('Nothing in the header does anything yet')
+$('#login').on 'click', (e)->
+	alert('Login is not implemented yet')
+
+$('#document-name').on 'click', (e)->
+	alert('Changing the document name is not supported yet')
+
+$('#bold').on 'click', (e)->
+	document.execCommand "bold"
+	$last.reposition()
+
+$('#italic').on 'click', (e)->
+	document.execCommand "italic"
+	$last.reposition()
+
+$('#underline').on 'click', (e)->
+	document.execCommand "underline"
+	$last.reposition()
+
+$('#strikethrough').on 'click', (e)->
+	document.execCommand "strikethrough"
+	$last.reposition()
 
 if location.hostname.match(/localhost|127\.0\.0\.1/) or location.protocol is 'file:'
 	if localStorage.debug

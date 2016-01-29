@@ -18,7 +18,6 @@ Less distracting UI means a stronger focus on content.
 	* Collapsing/expanding
 	* Adding/removing
 * Formatting
-	* Bold, underline (maybe), italics, strikethrough
 	* Links (pasting plain, creating from existing text, editing existing links...)
 	* Images (drag and drop to "upload" (or upload))
 * Prevent XSS
