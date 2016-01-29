@@ -37,7 +37,7 @@ $Node = (data, fb_n)->
 					y: data.y + 50
 				).focus()
 		# there probably shouldn't be "mousemove" here and should probably be some other input events
-		.on 'keydown keyup keypress mousemove mouseup', ->
+		.on 'keydown keyup keypress mousemove mouseup reformat', ->
 			$node.reposition()
 			setTimeout $node.reposition
 			content = $node.content()
@@ -139,8 +139,7 @@ for formatting_option in ['bold', 'italic', 'underline', 'strikethrough']
 	do (formatting_option)->
 		$('#' + formatting_option).on 'click', (e)->
 			document.execCommand formatting_option
-			# FIXME: sync change
-			$last.reposition()
+			$last.triggerHandler("reformat")
 
 if location.hostname.match(/localhost|127\.0\.0\.1/) or location.protocol is 'file:'
 	if localStorage.debug
