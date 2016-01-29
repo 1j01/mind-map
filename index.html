@@ -65,12 +65,18 @@
 				background: white;
 				border-bottom: 1px solid rgba(128, 128, 128, 0.5);
 			}
-			#document-name {
+			#document-title {
 				flex: 1;
 				font-size: 1.8rem;
+				font-weight: bold;
+				color: rgb(97, 68, 11);
+				/*color: rgb(138, 76, 16);*/
+			}
+			#document-title:placeholder-shown {
+				font-weight: normal;
 			}
 			button,
-			#document-name {
+			#document-title {
 				padding: 0.5rem;
 				border: 0;
 				background: none;
@@ -119,7 +125,7 @@
 	</head>
 	<body>
 		<header>
-			<input type="text" id="document-name" placeholder="Document name">
+			<input type="text" id="document-title" placeholder="Document title">
 			<div id="controls">
 				<button id="bold">Bold</button><button id="italic">Italic</button><button id="underline">Underline</button><button id="strikethrough">Strikethrough</button>
 			</div>

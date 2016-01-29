@@ -133,8 +133,15 @@ $('#document-content').on 'mousedown', (e)->
 $('#login').on 'click', (e)->
 	alert('Login is not implemented yet')
 
-$('#document-name').on 'input ', (e)->
-	alert('Changing the document name is not supported yet')
+$doc_title = $('#document-title')
+fb_doc_title = fb_doc.child('title')
+
+$doc_title.on 'input ', (e)->
+	fb_doc_title.set $doc_title.val()
+
+fb_doc_title.on 'value', (snapshot)->
+	unless $doc_title.val() is snapshot.val()
+		$doc_title.val(snapshot.val())
 
 for formatting_option in ['bold', 'italic', 'underline', 'strikethrough']
 	do (formatting_option)->

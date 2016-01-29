@@ -36,5 +36,7 @@ Less distracting UI means a stronger focus on content.
 * Themes
 * Mobile
 * User presence
+* Better fonts and icons
+* Optimize app load time
 
 [app]: http://1j01.github.io/mind-map/?mind-map
