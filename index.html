@@ -49,15 +49,19 @@
 			.debug .node {
 				background: rgba(255, 255, 0, 0.3);
 			}
+			header,
+			#logged-in,
+			#user {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+			}
 			header {
 				position: fixed;
 				z-index: 1;
 				top: 0;
 				left: 0;
 				right: 0;
-				display: flex;
-				flex-direction: row;
-				align-items: center;
 				background: white;
 				border-bottom: 1px solid rgba(128, 128, 128, 0.5);
 			}
@@ -89,7 +93,9 @@
 				background: rgba(0, 0, 0, 0.15);
 			}
 			#login,
-			#logged-in {
+			#logged-in,
+			#user,
+			#user-name {
 				margin: 0 0.3rem;
 			}
 			#login,
@@ -97,6 +103,10 @@
 				background: rgb(0, 154, 255);
 				color: white;
 				cursor: pointer;
+			}
+			#user-image {
+				height: 2rem;
+				border-radius: 50%;
 			}
 			#controls > button {
 				font-family: serif;
@@ -131,7 +141,10 @@
 			</div>
 			<button id="login">Login</button>
 			<div id="logged-in">
-				<span id="user-name"></span>
+				<div id="user">
+					<img id="user-image"></img>
+					<div id="user-name"></div>
+				</div>
 				<button id="logout">Logout</button>
 			</div>
 		</header>

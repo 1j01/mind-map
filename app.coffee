@@ -135,6 +135,7 @@ fb.onAuth (auth_data)->
 		$('#login').hide()
 		$('#logged-in').show()
 		$('#user-name').text auth_data.google.displayName
+		$('#user-image').attr(src: auth_data.google.profileImageURL)
 	else
 		$('#logged-in').hide()
 		$('#login').show()

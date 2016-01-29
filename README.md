@@ -27,15 +27,16 @@ Less distracting UI means a stronger focus on content.
 * Connections
 	* Add text
 	* Change color
-* Login
+* Firebase security rules
+* User presence
+	* Cursors and selections
+	* Pointers to where someone is in the document
 * GUI to create and manage documents
-* When undoing, restore nodes immediately on key press
 * Look for new images added, listen for onload and reposition immediately
 * Store history and allow rolling back changes
 * Chrome app
 * Themes
 * Mobile
-* User presence
 * Better fonts and icons
 * Optimize app load time
 
