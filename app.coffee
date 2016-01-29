@@ -28,16 +28,13 @@ $Node = (data, fb_n)->
 			position: 'absolute'
 			padding: '5px'
 		.on 'keydown', (e)->
-			cleanup()
-			$last = $node
 			if e.keyCode is 13 and not e.shiftKey
 				e.preventDefault()
 				$Node(
 					x: data.x + Math.random() * 100 - 50
 					y: data.y + 50
 				).focus()
-		# there probably shouldn't be "mousemove" here and should probably be some other input events
-		.on 'keydown keyup keypress mousemove mouseup reformat', ->
+		.on 'input', ->
 			$node.reposition()
 			setTimeout $node.reposition
 			content = $node.content()
@@ -136,14 +133,13 @@ $('#document-content').on 'mousedown', (e)->
 $('#login').on 'click', (e)->
 	alert('Login is not implemented yet')
 
-$('#document-name').on 'click', (e)->
+$('#document-name').on 'input ', (e)->
 	alert('Changing the document name is not supported yet')
 
 for formatting_option in ['bold', 'italic', 'underline', 'strikethrough']
 	do (formatting_option)->
 		$('#' + formatting_option).on 'click', (e)->
 			document.execCommand formatting_option
-			$last.triggerHandler("reformat")
 
 if location.hostname.match(/localhost|127\.0\.0\.1/) or location.protocol is 'file:'
 	if localStorage.debug
