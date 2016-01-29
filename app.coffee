@@ -17,11 +17,6 @@ $Node = (data, fb_n)->
 				$last.remove()
 			$last = null
 	
-	position = ->
-		$node.css
-			left: data.x - ($node.outerWidth() / 2)
-			top: data.y - ($node.outerHeight() / 2)
-	
 	if $last and $last.isEmpty()
 		$last.remove()
 	
@@ -43,8 +38,8 @@ $Node = (data, fb_n)->
 				).focus()
 		# there probably shouldn't be "mousemove" here and should probably be some other input events
 		.on 'keydown keyup keypress mousemove mouseup', ->
-			position()
-			setTimeout position
+			$node.reposition()
+			setTimeout $node.reposition
 			content = $node.content()
 			if previous_content isnt content
 				fb_n.set
@@ -61,14 +56,17 @@ $Node = (data, fb_n)->
 	
 	$nodes_by_key[fb_n.key()] = $node
 	
-	$node.reposition = position
+	$node.reposition = ->
+		$node.css
+			left: data.x - ($node.outerWidth() / 2)
+			top: data.y - ($node.outerHeight() / 2)
 	
 	$node.content = (html)->
 		if typeof html is 'string'
 			previous_content = html
 			unless $node.html() is html
 				$node.html(html)
-			position()
+			$node.reposition()
 			$node
 		else
 			$node.html()
@@ -97,7 +95,7 @@ $Node = (data, fb_n)->
 		else
 			data._ = ""
 		$node.content data._
-		position()
+		$node.reposition()
 		if data._
 			$node.show()
 			fb_n.onDisconnect().cancel()
@@ -137,21 +135,12 @@ $('#login').on 'click', (e)->
 $('#document-name').on 'click', (e)->
 	alert('Changing the document name is not supported yet')
 
-$('#bold').on 'click', (e)->
-	document.execCommand "bold"
-	$last.reposition()
-
-$('#italic').on 'click', (e)->
-	document.execCommand "italic"
-	$last.reposition()
-
-$('#underline').on 'click', (e)->
-	document.execCommand "underline"
-	$last.reposition()
-
-$('#strikethrough').on 'click', (e)->
-	document.execCommand "strikethrough"
-	$last.reposition()
+for formatting_option in ['bold', 'italic', 'underline', 'strikethrough']
+	do (formatting_option)->
+		$('#' + formatting_option).on 'click', (e)->
+			document.execCommand formatting_option
+			# FIXME: sync change
+			$last.reposition()
 
 if location.hostname.match(/localhost|127\.0\.0\.1/) or location.protocol is 'file:'
 	if localStorage.debug
