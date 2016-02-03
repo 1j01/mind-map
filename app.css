@@ -116,23 +116,10 @@ button:active {
 	height: 2rem;
 	border-radius: 50%;
 }
-/* TODO: proper icons */
-#controls > button {
-	font-family: serif;
-	font-size: 1.3rem;
-}
 #controls > button > span {
 	display: none;
 }
-#bold {
-	font-weight: bold;
-}
-#italic {
-	font-style: italic;
-}
-#underline {
-	text-decoration: underline;
-}
-#strikethrough {
-	text-decoration: line-through;
+#controls > button {
+	padding: 0.5rem 0.3rem;
+	font-size: 1rem;
 }
