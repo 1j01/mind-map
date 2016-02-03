@@ -81,8 +81,30 @@ header {
 	/*color: rgb(138, 76, 16);*/
 }
 #document-title:placeholder-shown {
+	color: #A9A9A9;
 	font-weight: normal;
 }
+#document-title::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+	color: #A9A9A9;
+	font-weight: normal;
+	opacity: 1;
+}
+#document-title::-moz-placeholder { /* Firefox 19+ */
+	color: #A9A9A9;
+	font-weight: normal;
+	opacity: 1;
+}
+#document-title:-ms-input-placeholder { /* IE 10+ */
+	color: #A9A9A9;
+	font-weight: normal;
+	opacity: 1;
+}
+#document-title:-moz-placeholder { /* Firefox 18- */
+	color: #A9A9A9;
+	font-weight: normal;
+	opacity: 1;
+}
+
 button,
 #document-title {
 	padding: 0.5rem;
