@@ -133,35 +133,45 @@ view_offset =
 		unless view_offset.animating
 			view_offset.animate()
 	animate: ->
-		# console.log "animate"
 		view_offset.x += view_offset.vx
 		view_offset.y += view_offset.vy
-		view_offset.vx *= 0.8
-		view_offset.vy *= 0.8
-		if Math.abs(view_offset.vx) > 0.001 or Math.abs(view_offset.vy) > 0.001
+		view_offset.vx *= 0.9
+		view_offset.vy *= 0.9
+		end_drag_velocity.vx *= 0.5
+		end_drag_velocity.vy *= 0.5
+		if (
+			Math.abs(view_offset.vx) > 0.001 or
+			Math.abs(view_offset.vy) > 0.001 or
+			Math.abs(end_drag_velocity.vx) > 0.001 or
+			Math.abs(end_drag_velocity.vy) > 0.001
+		)
 			requestAnimationFrame view_offset.animate
 			view_offset.animating = yes
 		else
 			view_offset.animating = no
 		$doc_content.css
-			transform: "translate(#{view_offset.x}px, #{view_offset.y}px)"
+			# transform: "translate(#{view_offset.x}px, #{view_offset.y}px)"
 			# transform: "translate3d(#{view_offset.x}px, #{view_offset.y}px, 0px)"
+			transform: "translate3d(#{view_offset.x.toFixed(3)}px, #{view_offset.y.toFixed(3)}px, 0px)"
+			backfaceVisibility: "hidden"
 
 # $(window).on 'scroll', (e)->
 # 	e.preventDefault()
-	# document.body.scrollTop = 0
-	# $("*")
-	# 	.scrollTop 0
-	# 	.scrollLeft 0
+# 	document.body.scrollTop = 0
+# 	$(window)
+# 		.scrollTop 0
+# 		.scrollLeft 0
+
+# TODO: MMB drag even on nodes (although that would likely break linuxy clipboarding)
 $('#document-background').on 'mousedown', (e)->
-	unless $(e.target).closest('.node').length
+	# unless $(e.target).closest('.node').length # and e.button isnt 1 # MMB
 		e.preventDefault()
 		unless e.button is 1 # MMB
 			$Node(
 				x: e.pageX - view_offset.x
 				y: e.pageY - view_offset.y
 			).focus()
-		view_offset.animate()
+		view_offset.start_animating()
 		drag_start_offset.x = view_offset.x - e.pageX
 		drag_start_offset.y = view_offset.y - e.pageY
 		end_drag_velocity.vx = 0
@@ -171,16 +181,18 @@ $('#document-background').on 'mousedown', (e)->
 			prev_view_offset_y = view_offset.y
 			view_offset.x = e.pageX + drag_start_offset.x
 			view_offset.y = e.pageY + drag_start_offset.y
-			end_drag_velocity.vx = view_offset.x - prev_view_offset_x
-			end_drag_velocity.vy = view_offset.y - prev_view_offset_y
-			view_offset.animate()
+			end_drag_velocity.vx *= 0.9
+			end_drag_velocity.vy *= 0.9
+			end_drag_velocity.vx += (view_offset.x - prev_view_offset_x) * 0.3
+			end_drag_velocity.vy += (view_offset.y - prev_view_offset_y) * 0.3
+			view_offset.start_animating()
 		$(window).on 'mouseup', mouseup = (e)->
 			$(window).off 'mousemove', mousemove
 			$(window).off 'mouseup', mouseup
 			unless e.button is 2 # RMB
 				view_offset.vx = end_drag_velocity.vx
 				view_offset.vy = end_drag_velocity.vy
-				view_offset.animate()
+				view_offset.start_animating()
 
 fb.onAuth (auth_data)->
 	if auth_data
