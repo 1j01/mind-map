@@ -25,6 +25,7 @@ body {
 #document-content {
 	color: rgb(97, 68, 11);
 	pointer-events: none;
+	overflow: visible;
 }
 
 /*
