@@ -118,10 +118,10 @@ button:active {
 /* TODO: proper icons */
 #controls > button {
 	font-family: serif;
-	font-size: 0;
-}
-#controls > button::first-letter {
 	font-size: 1.3rem;
+}
+#controls > button > span {
+	display: none;
 }
 #bold {
 	font-weight: bold;
