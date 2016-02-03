@@ -12,6 +12,7 @@ Less distracting UI means a stronger focus on content.
 
 ### TODO
 
+* FIXME: tabbing scrolls in the default broken way
 * Structure
 	* Traversing up/down, left/right
 	* Collapsing/expanding

@@ -150,17 +150,9 @@ view_offset =
 		else
 			view_offset.animating = no
 		$doc_content.css
-			# transform: "translate(#{view_offset.x}px, #{view_offset.y}px)"
-			# transform: "translate3d(#{view_offset.x}px, #{view_offset.y}px, 0px)"
-			transform: "translate3d(#{view_offset.x.toFixed(3)}px, #{view_offset.y.toFixed(3)}px, 0px)"
-			backfaceVisibility: "hidden"
-
-# $(window).on 'scroll', (e)->
-# 	e.preventDefault()
-# 	document.body.scrollTop = 0
-# 	$(window)
-# 		.scrollTop 0
-# 		.scrollLeft 0
+			transform: "translate(#{view_offset.x.toFixed(3)}px, #{view_offset.y.toFixed(3)}px)"
+			# transform: "translate3d(#{view_offset.x.toFixed(3)}px, #{view_offset.y.toFixed(3)}px, 0px)"
+			# backfaceVisibility: "hidden"
 
 # TODO: MMB drag even on nodes (although that would likely break linuxy clipboarding)
 $('#document-background').on 'mousedown', (e)->

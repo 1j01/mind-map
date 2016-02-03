@@ -51,6 +51,7 @@ body {
 	outline: none;
 	font-size: 2em;
 	pointer-events: all;
+	white-space: nowrap;
 }
 .debug .node {
 	background: rgba(255, 255, 0, 0.3);
