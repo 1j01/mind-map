@@ -1,6 +1,43 @@
 
 doc_name = location.search or 'document'
 fb = new Firebase('https://mind-map.firebaseio.com/')
+fb_doc = fb.child('documents').child(doc_name)
+fb_nodes = fb_doc.child('nodes')
+
+fb.onAuth (auth_data)->
+	if auth_data
+		$('#login').hide()
+		$('#logged-in').show()
+		$('#user-name').text auth_data.google.displayName
+		$('#user-image').attr(src: auth_data.google.profileImageURL)
+	else
+		$('#logged-in').hide()
+		$('#login').show()
+
+$('#login').on 'click', (e)->
+	fb.authWithOAuthPopup "google", (err, auth_data)->
+		if err
+			console.log "Login failed", err
+		else
+			console.log "Authenticated successfully with payload:", auth_data
+
+$('#logout').on 'click', (e)->
+	fb.unauth()
+
+$doc_title = $('#document-title')
+fb_doc_title = fb_doc.child('title')
+
+$doc_title.on 'input ', (e)->
+	fb_doc_title.set $doc_title.val()
+
+fb_doc_title.on 'value', (snapshot)->
+	unless $doc_title.val() is snapshot.val()
+		$doc_title.val(snapshot.val())
+
+for formatting_option in ['bold', 'italic', 'underline', 'strikethrough']
+	do (formatting_option)->
+		$('#' + formatting_option).on 'click', (e)->
+			document.execCommand formatting_option
 
 $last = null
 $nodes_by_key = {}
@@ -102,9 +139,6 @@ $Node = (data, fb_n)->
 	
 	$node
 
-fb_doc = fb.child('documents').child(doc_name)
-fb_nodes = fb_doc.child('nodes')
-
 fb_nodes.on 'child_added', (snapshot)->
 	# setTimeout needed for deduplication logic
 	setTimeout ->
@@ -185,41 +219,6 @@ $('#document-background').on 'mousedown', (e)->
 				view_offset.vx = end_drag_velocity.vx
 				view_offset.vy = end_drag_velocity.vy
 				view_offset.start_animating()
-
-fb.onAuth (auth_data)->
-	if auth_data
-		$('#login').hide()
-		$('#logged-in').show()
-		$('#user-name').text auth_data.google.displayName
-		$('#user-image').attr(src: auth_data.google.profileImageURL)
-	else
-		$('#logged-in').hide()
-		$('#login').show()
-
-$('#login').on 'click', (e)->
-	fb.authWithOAuthPopup "google", (err, auth_data)->
-		if err
-			console.log "Login failed", err
-		else
-			console.log "Authenticated successfully with payload:", auth_data
-
-$('#logout').on 'click', (e)->
-	fb.unauth()
-
-$doc_title = $('#document-title')
-fb_doc_title = fb_doc.child('title')
-
-$doc_title.on 'input ', (e)->
-	fb_doc_title.set $doc_title.val()
-
-fb_doc_title.on 'value', (snapshot)->
-	unless $doc_title.val() is snapshot.val()
-		$doc_title.val(snapshot.val())
-
-for formatting_option in ['bold', 'italic', 'underline', 'strikethrough']
-	do (formatting_option)->
-		$('#' + formatting_option).on 'click', (e)->
-			document.execCommand formatting_option
 
 if location.hostname.match(/localhost|127\.0\.0\.1/) or location.protocol is 'file:'
 	if localStorage.debug
