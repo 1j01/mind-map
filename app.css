@@ -26,6 +26,7 @@ body {
 	color: rgb(97, 68, 11);
 	pointer-events: none;
 	overflow: visible;
+	width: 1000000px; /* not infinite, but oh well */
 }
 
 /*

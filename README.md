@@ -12,8 +12,6 @@ Less distracting UI means a stronger focus on content.
 
 ### TODO
 
-* Infinite scrolling
-	* FIXME: Elements to the right of #document-content's bounds get squishy
 * Structure
 	* Traversing up/down, left/right
 	* Collapsing/expanding
