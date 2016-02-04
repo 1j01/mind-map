@@ -188,9 +188,9 @@ view_offset =
 			# transform: "translate3d(#{view_offset.x.toFixed(3)}px, #{view_offset.y.toFixed(3)}px, 0px)"
 			# backfaceVisibility: "hidden"
 
-# TODO: MMB drag even on nodes (although that would likely break linuxy clipboarding)
-$('#document-background').on 'mousedown', (e)->
-	# unless $(e.target).closest('.node').length # and e.button isnt 1 # MMB
+# TODO: try to allow linuxy clipboarding but still allow MMB dragging even on nodes?
+$('#document-background, #document-content').on 'mousedown', (e)->
+	unless $(e.target).closest('.node').length and e.button isnt 1 # MMB
 		e.preventDefault()
 		unless e.button is 1 # MMB
 			$Node(
