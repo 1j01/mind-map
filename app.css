@@ -138,10 +138,19 @@ button:active {
 	height: 2rem;
 	border-radius: 50%;
 }
-#controls > button > span {
+#formatting > button > span {
 	display: none;
 }
-#controls > button {
+#formatting > button {
 	padding: 0.5rem 0.3rem;
 	font-size: 1rem;
+}
+#new-document {
+	padding: 0.2rem;
+	margin: 0.2rem;
+	margin-left: 0.5rem;
+}
+#new-document > img {
+	vertical-align: middle;
+	pointer-events: none;
 }

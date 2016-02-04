@@ -1,7 +1,8 @@
 
 doc_name = location.search or 'document'
 fb = new Firebase('https://mind-map.firebaseio.com/')
-fb_doc = fb.child('documents').child(doc_name)
+fb_docs = fb.child('documents')
+fb_doc = fb_docs.child(doc_name)
 fb_nodes = fb_doc.child('nodes')
 
 fb.onAuth (auth_data)->
@@ -38,6 +39,34 @@ for formatting_option in ['bold', 'italic', 'underline', 'strikethrough']
 	do (formatting_option)->
 		$('#' + formatting_option).on 'click', (e)->
 			document.execCommand formatting_option
+
+byte_to_hex = (byte)-> "0#{byte.toString(16)}".slice(-2)
+
+generate_id = (len=40)->
+	# len must be an even number (default: 40)
+	arr = new Uint8Array(len / 2)
+	crypto.getRandomValues(arr)
+	[].map.call(arr, byte_to_hex).join("")
+
+create_new_document = (uid)->
+	new_doc_id = generate_id()
+	fb_new_doc = fb_docs.child(new_doc_id)
+	fb_new_doc.child('owner_id').set(uid) # claimeth thine document!
+	location.search = new_doc_id
+
+
+$('#new-document').on 'click', (e)->
+	auth_data = fb.getAuth()
+	if auth_data?
+		create_new_document(auth_data.uid)
+	else
+		fb.authWithOAuthPopup "google", (err, auth_data)->
+			if err
+				console.log "Login failed", err
+			else
+				console.log "Authenticated successfully with payload:", auth_data
+				create_new_document(auth_data.uid)
+
 
 $last = null
 $nodes_by_key = {}
