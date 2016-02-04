@@ -1,5 +1,5 @@
 
-doc_name = location.search or 'document'
+doc_name = (location.search or 'document').replace("?", "")
 fb = new Firebase('https://mind-map.firebaseio.com/')
 fb_docs = fb.child('documents')
 fb_doc = fb_docs.child(doc_name)
@@ -51,8 +51,14 @@ generate_id = (len=40)->
 create_new_document = (uid)->
 	new_doc_id = generate_id()
 	fb_new_doc = fb_docs.child(new_doc_id)
-	fb_new_doc.child('owner_id').set(uid) # claimeth thine document!
-	location.search = new_doc_id
+	# claimeth thine document!
+	fb_new_doc.child('owner_uid').set uid, (err)->
+		if err
+			# TODO: visible notifications for these sorts of errors
+			console.error "Failed to create new document", err
+		else
+			# and go to it!
+			location.search = new_doc_id
 
 
 $('#new-document').on 'click', (e)->
@@ -73,6 +79,7 @@ $nodes_by_key = {}
 
 $Node = (data, fb_n)->
 	
+	data._ ?= ""
 	fb_n ?= fb_nodes.push(data)
 	
 	return if $nodes_by_key[fb_n.key()]

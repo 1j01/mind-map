@@ -29,7 +29,7 @@ Less distracting UI means a stronger focus on content.
 * Connections
 	* Add text
 	* Change color
-* Firebase security rules
+* Handle being logged out or being on a document without an `owner_uid`
 * Unobtrusive savedness notification
 * User presence
 	* Cursors and selections

@@ -1,0 +1,42 @@
+{
+  "rules": {
+    "documents": {
+      "$document_id": {
+        "owner_uid": {
+          ".write": "auth != null && newData.val() == auth.uid && !data.exists()"
+        },
+        "nodes": {
+          ".read": true,
+          ".write": "auth != null && data.parent().child('owner_uid').val() == auth.uid",
+          "$node_id": {
+            ".validate": "newData.hasChildren(['x', 'y', '_'])",
+            "x": {
+              ".validate": "newData.isNumber()"
+            },
+            "y": {
+              ".validate": "newData.isNumber()"
+            },
+            "_": {
+              ".validate": "newData.isString()"
+            }
+          }
+        },
+        "title": {
+          ".read": true,
+          ".write": "auth != null && data.parent().child('owner_uid').val() == auth.uid",
+          ".validate": "newData.isString()"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "stats": {
+      ".read": true,
+      ".write": true
+    },
+    "$other": {
+      ".validate": false
+    }
+  }
+}
