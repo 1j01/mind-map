@@ -2,41 +2,31 @@
   "rules": {
     "documents": {
       "$document_id": {
+        ".write": "(data.child('public').val() === true) || (auth != null && ((data.child('owner_uid').val() == auth.uid) || !data.exists()))",
+        ".read": "(data.child('public').val() === true) || (auth != null && data.child('owner_uid').val() == auth.uid)",
         "owner_uid": {
-          ".write": "auth != null && newData.val() == auth.uid && !data.exists()"
+          ".validate": "newData.val() == auth.uid && !data.exists() && !(data.parent().child('public').val() === true)"
         },
         "nodes": {
-          ".read": true,
-          ".write": "auth != null && data.parent().child('owner_uid').val() == auth.uid",
           "$node_id": {
             ".validate": "newData.hasChildren(['x', 'y', '_'])",
-            "x": {
-              ".validate": "newData.isNumber()"
-            },
-            "y": {
-              ".validate": "newData.isNumber()"
-            },
-            "_": {
-              ".validate": "newData.isString()"
-            }
+            "x": { ".validate": "newData.isNumber()" },
+            "y": { ".validate": "newData.isNumber()" },
+            "_": { ".validate": "newData.isString()" }
           }
         },
-        "title": {
-          ".read": true,
-          ".write": "auth != null && data.parent().child('owner_uid').val() == auth.uid",
-          ".validate": "newData.isString()"
+        "title": { ".validate": "newData.isString()" },
+        "public": {
+          ".write": false,
+          ".validate": "newData.isBoolean()"
         },
-        "$other": {
-          ".validate": false
-        }
+        "$other": { ".validate": false }
       }
     },
     "stats": {
       ".read": true,
       ".write": true
     },
-    "$other": {
-      ".validate": false
-    }
+    "$other": {  ".validate": false }
   }
 }

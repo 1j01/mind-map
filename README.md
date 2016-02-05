@@ -23,6 +23,7 @@ Less distracting UI means a stronger focus on content.
 	* Images (drag and drop to either "upload" or upload)
 * Prevent XSS
 * Use something better than `contenteditable`
+	* [Why ContentEditable is Terrible][]
 	* Still needs to carry undos/redos between nodes
 * Undo/redo buttons?
 * Subtle blobby highlight around nodes
@@ -47,3 +48,4 @@ Less distracting UI means a stronger focus on content.
 * Maybe add a mindmap minimap to Minmap
 
 [app]: http://1j01.github.io/mind-map/?mind-map
+[Why ContentEditable is Terrible]: https://medium.com/medium-eng/why-contenteditable-is-terrible-122d8a40e480
