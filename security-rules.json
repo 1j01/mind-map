@@ -4,6 +4,7 @@
       "$document_id": {
         ".write": "(data.child('public').val() === true) || (auth != null && ((data.child('owner_uid').val() == auth.uid) || !data.exists()))",
         ".read": "(data.child('public').val() === true) || (auth != null && data.child('owner_uid').val() == auth.uid)",
+        ".validate": "data.exists() || $document_id.matches(/^[0-9a-f]{40}$/)",
         "owner_uid": {
           ".validate": "newData.val() == auth.uid && !data.exists() && !(data.parent().child('public').val() === true)"
         },
@@ -27,6 +28,6 @@
       ".read": true,
       ".write": true
     },
-    "$other": {  ".validate": false }
+    "$other": { ".validate": false }
   }
 }
