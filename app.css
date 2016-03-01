@@ -82,35 +82,24 @@ header > .mdl-layout__header-row {
 	color: rgb(97, 68, 11);
 	/*color: rgb(138, 76, 16);*/
 }
-#document-title:placeholder-shown {
-	color: #A9A9A9;
-	font-weight: normal;
+#document-title-input,
+#document-title-placeholder {
+	font-size: 1.8rem;
+	font-weight: bold;
 }
-#document-title::-webkit-input-placeholder { /* Chrome/Opera/Safari */
-	color: #A9A9A9;
-	font-weight: normal;
-	opacity: 1;
+#document-title-input {
+	border-bottom: 0;
 }
-#document-title::-moz-placeholder { /* Firefox 19+ */
-	color: #A9A9A9;
-	font-weight: normal;
-	opacity: 1;
-}
-#document-title:-ms-input-placeholder { /* IE 10+ */
-	color: #A9A9A9;
-	font-weight: normal;
-	opacity: 1;
-}
-#document-title:-moz-placeholder { /* Firefox 18- */
-	color: #A9A9A9;
-	font-weight: normal;
-	opacity: 1;
-}
-
 #document-title {
-	padding: 0.5rem;
+	/*padding: 0.5rem;*/
 	border: 0;
 	background: none;
+}
+#document-title-placeholder {
+	color: black;
+	opacity: 0.4;
+	margin: 0;
+	padding: 4px 0;
 }
 #sign-in,
 #signed-in,

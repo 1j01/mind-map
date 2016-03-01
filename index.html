@@ -25,7 +25,10 @@
 				<!-- <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-js-ripple-effect mdl-button--colored">
 					<i class="material-icons">add</i>
 				</button> -->
-				<input type="text" id="document-title" placeholder="Document title">
+				<div class="mdl-textfield mdl-js-textfield" id="document-title">
+					<input class="mdl-textfield__input" type="text" id="document-title-input">
+					<label class="mdl-textfield__label" for="document-title-input" id="document-title-placeholder">Document title</label>
+				</div>
 				<div id="formatting"></div>
 				<button id="sign-in" class="mdl-button mdl-button--raised mdl-button--accent mdl-js-button mdl-js-ripple-effect">Sign in</button>
 				<div id="signed-in" style="display: none">

@@ -25,27 +25,30 @@ $('#sign-in').on 'click', (e)->
 $('#sign-out').on 'click', (e)->
 	fb.unauth()
 
-$doc_title = $('#document-title')
+$doc_title_input = $('#document-title-input')
 fb_doc_title = fb_doc.child('title')
 
-$doc_title.on 'input ', (e)->
-	fb_doc_title.set $doc_title.val()
+$doc_title_input.on 'input ', (e)->
+	fb_doc_title.set $doc_title_input.val()
 
 fb_doc_title.on 'value', (snapshot)->
-	unless $doc_title.val() is snapshot.val()
-		$doc_title.val(snapshot.val())
+	unless $doc_title_input.val() is snapshot.val()
+		$doc_title_input.val(snapshot.val())
+		# console.log window.dt = $doc_title_input.get(0)
+		# $doc_title_input.get(0).MaterialTextField.change('test')
+		# $doc_title_input.get(0).change('test')
+		$doc_title_input.parent().addClass('is-dirty') if $doc_title_input.val()
 
 for formatting_option in ['bold', 'italic', 'underline', 'strikethrough']
 	do (formatting_option)->
-		button =
+		$button =
 			$("<button id='#{formatting_option}'><i class='icon-#{formatting_option}'></i><span>#{formatting_option}</span></button>")
 				.appendTo '#formatting'
 				.addClass 'mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect'
 				.on 'click', (e)->
 					document.execCommand formatting_option
-				.get(0)
 		
-		componentHandler.upgradeElement(button)
+		componentHandler.upgradeElement($button.get(0))
 
 byte_to_hex = (byte)-> "0#{byte.toString(16)}".slice(-2)
 
