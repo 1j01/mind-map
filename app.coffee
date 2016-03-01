@@ -37,8 +37,15 @@ fb_doc_title.on 'value', (snapshot)->
 
 for formatting_option in ['bold', 'italic', 'underline', 'strikethrough']
 	do (formatting_option)->
-		$('#' + formatting_option).on 'click', (e)->
-			document.execCommand formatting_option
+		button =
+			$("<button id='#{formatting_option}'><i class='icon-#{formatting_option}'></i><span>#{formatting_option}</span></button>")
+				.appendTo '#formatting'
+				.addClass 'mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect'
+				.on 'click', (e)->
+					document.execCommand formatting_option
+				.get(0)
+		
+		componentHandler.upgradeElement(button)
 
 byte_to_hex = (byte)-> "0#{byte.toString(16)}".slice(-2)
 
@@ -228,21 +235,24 @@ view_offset =
 $('#document-background, #document-content').on 'mousedown', (e)->
 	unless $(e.target).closest('.node').length and e.button isnt 1 # MMB
 		e.preventDefault()
+		# offset = $('#document-content')[0].getBoundingClientRect()
+		# offset_top = $('#document-background').offset().top
+		offset_top = 0
 		unless e.button is 1 # MMB
 			$Node(
 				x: e.pageX - view_offset.x
-				y: e.pageY - view_offset.y
+				y: e.pageY - view_offset.y - offset_top
 			).focus()
 		view_offset.start_animating()
 		drag_start_offset.x = view_offset.x - e.pageX
-		drag_start_offset.y = view_offset.y - e.pageY
+		drag_start_offset.y = view_offset.y - e.pageY + offset_top
 		end_drag_velocity.vx = 0
 		end_drag_velocity.vy = 0
 		$(window).on 'mousemove', mousemove = (e)->
 			prev_view_offset_x = view_offset.x
 			prev_view_offset_y = view_offset.y
 			view_offset.x = e.pageX + drag_start_offset.x
-			view_offset.y = e.pageY + drag_start_offset.y
+			view_offset.y = e.pageY + drag_start_offset.y - offset_top
 			end_drag_velocity.vx *= 0.9
 			end_drag_velocity.vy *= 0.9
 			end_drag_velocity.vx += (view_offset.x - prev_view_offset_x) * 0.3
