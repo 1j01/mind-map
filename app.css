@@ -58,7 +58,7 @@ body {
 }
 
 header,
-#logged-in,
+#signed-in,
 #user {
 	display: flex;
 	flex-direction: row;
@@ -122,14 +122,14 @@ button:focus {
 button:active {
 	background: rgba(0, 0, 0, 0.15);
 }
-#login,
-#logged-in,
+#sign-in,
+#signed-in,
 #user,
 #user-name {
 	margin: 0 0.3rem;
 }
-#login,
-#logout {
+#sign-in,
+#sign-out {
 	background: rgb(0, 154, 255);
 	color: white;
 	cursor: pointer;

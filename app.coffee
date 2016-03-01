@@ -7,22 +7,22 @@ fb_nodes = fb_doc.child('nodes')
 
 fb.onAuth (auth_data)->
 	if auth_data
-		$('#login').hide()
-		$('#logged-in').show()
+		$('#sign-in').hide()
+		$('#signed-in').show()
 		$('#user-name').text auth_data.google.displayName
 		$('#user-image').attr(src: auth_data.google.profileImageURL)
 	else
-		$('#logged-in').hide()
-		$('#login').show()
+		$('#signed-in').hide()
+		$('#sign-in').show()
 
-$('#login').on 'click', (e)->
+$('#sign-in').on 'click', (e)->
 	fb.authWithOAuthPopup "google", (err, auth_data)->
 		if err
-			console.log "Login failed", err
+			console.log "Sign in failed", err
 		else
 			console.log "Authenticated successfully with payload:", auth_data
 
-$('#logout').on 'click', (e)->
+$('#sign-out').on 'click', (e)->
 	fb.unauth()
 
 $doc_title = $('#document-title')
@@ -68,7 +68,7 @@ $('#new-document').on 'click', (e)->
 	else
 		fb.authWithOAuthPopup "google", (err, auth_data)->
 			if err
-				console.log "Login failed", err
+				console.log "Sign in failed", err
 			else
 				console.log "Authenticated successfully with payload:", auth_data
 				create_new_document(auth_data.uid)
