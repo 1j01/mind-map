@@ -28,15 +28,12 @@ $('#sign-out').on 'click', (e)->
 $doc_title_input = $('#document-title-input')
 fb_doc_title = fb_doc.child('title')
 
-$doc_title_input.on 'input ', (e)->
+$doc_title_input.on 'input', (e)->
 	fb_doc_title.set $doc_title_input.val()
 
 fb_doc_title.on 'value', (snapshot)->
 	unless $doc_title_input.val() is snapshot.val()
 		$doc_title_input.val(snapshot.val())
-		# console.log window.dt = $doc_title_input.get(0)
-		# $doc_title_input.get(0).MaterialTextField.change('test')
-		# $doc_title_input.get(0).change('test')
 		$doc_title_input.parent().addClass('is-dirty') if $doc_title_input.val()
 
 for formatting_option in ['bold', 'italic', 'underline', 'strikethrough']
@@ -69,7 +66,7 @@ create_new_document = (uid)->
 		else
 			# and go to it!
 			location.search = new_doc_id
-
+			# in the future, once the editor is a component, we can use the history API to switch documents
 
 $('#new-document').on 'click', (e)->
 	auth_data = fb.getAuth()
@@ -238,24 +235,21 @@ view_offset =
 $('#document-background, #document-content').on 'mousedown', (e)->
 	unless $(e.target).closest('.node').length and e.button isnt 1 # MMB
 		e.preventDefault()
-		# offset = $('#document-content')[0].getBoundingClientRect()
-		# offset_top = $('#document-background').offset().top
-		offset_top = 0
 		unless e.button is 1 # MMB
 			$Node(
 				x: e.pageX - view_offset.x
-				y: e.pageY - view_offset.y - offset_top
+				y: e.pageY - view_offset.y
 			).focus()
 		view_offset.start_animating()
 		drag_start_offset.x = view_offset.x - e.pageX
-		drag_start_offset.y = view_offset.y - e.pageY + offset_top
+		drag_start_offset.y = view_offset.y - e.pageY
 		end_drag_velocity.vx = 0
 		end_drag_velocity.vy = 0
 		$(window).on 'mousemove', mousemove = (e)->
 			prev_view_offset_x = view_offset.x
 			prev_view_offset_y = view_offset.y
 			view_offset.x = e.pageX + drag_start_offset.x
-			view_offset.y = e.pageY + drag_start_offset.y - offset_top
+			view_offset.y = e.pageY + drag_start_offset.y
 			end_drag_velocity.vx *= 0.9
 			end_drag_velocity.vy *= 0.9
 			end_drag_velocity.vx += (view_offset.x - prev_view_offset_x) * 0.3
