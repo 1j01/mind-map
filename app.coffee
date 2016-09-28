@@ -23,7 +23,7 @@ sign_in = (signed_in_callback)->
 	auth.signInWithPopup(provider)
 		.then (auth_data)->
 			{user} = auth_data
-			signed_in_callback()
+			signed_in_callback?()
 			console?.log? "Authenticated successfully with payload:", auth_data
 		.catch (err)->
 				console?.log? "Sign in failed", err
