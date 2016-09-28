@@ -1,11 +1,15 @@
 
 doc_name = (location.search or 'document').replace("?", "")
-fb = new Firebase('https://mind-map.firebaseio.com/')
+fb = firebase.database().ref()
 fb_docs = fb.child('documents')
 fb_doc = fb_docs.child(doc_name)
 fb_nodes = fb_doc.child('nodes')
 
-fb.onAuth (auth_data)->
+auth = firebase.auth()
+provider = new firebase.auth.GoogleAuthProvider()
+user = null
+
+auth.onAuthStateChanged (auth_data)->
 	if auth_data
 		$('#sign-in').hide()
 		$('#signed-in').show()
@@ -15,15 +19,26 @@ fb.onAuth (auth_data)->
 		$('#signed-in').hide()
 		$('#sign-in').show()
 
+sign_in = (signed_in_callback)->
+	auth.signInWithPopup(provider)
+		.then (auth_data)->
+			{user} = auth_data
+			signed_in_callback()
+			console?.log? "Authenticated successfully with payload:", auth_data
+		.catch (err)->
+				console?.log? "Sign in failed", err
+
+sign_in_if_needed = (signed_in_callback)->
+	if user?
+		signed_in_callback()
+	else
+		sign_in(signed_in_callback)
+
 $('#sign-in').on 'click', (e)->
-	fb.authWithOAuthPopup "google", (err, auth_data)->
-		if err
-			console.log "Sign in failed", err
-		else
-			console.log "Authenticated successfully with payload:", auth_data
+	sign_in()
 
 $('#sign-out').on 'click', (e)->
-	fb.unauth()
+	auth.signOut()
 
 $doc_title_input = $('#document-title-input')
 fb_doc_title = fb_doc.child('title')
@@ -59,7 +74,8 @@ create_new_document = (uid)->
 	new_doc_id = generate_id()
 	fb_new_doc = fb_docs.child(new_doc_id)
 	# claimeth thine document!
-	fb_new_doc.child('owner_uid').set uid, (err)->
+	console.log "create_new_document", user, user.uid
+	fb_new_doc.child('owner_uid').set user.uid, (err)->
 		if err
 			# TODO: visible notifications for these sorts of errors
 			console.error "Failed to create new document", err
@@ -69,16 +85,7 @@ create_new_document = (uid)->
 			# in the future, once the editor is a component, we can use the history API to switch documents
 
 $('#new-document').on 'click', (e)->
-	auth_data = fb.getAuth()
-	if auth_data?
-		create_new_document(auth_data.uid)
-	else
-		fb.authWithOAuthPopup "google", (err, auth_data)->
-			if err
-				console.log "Sign in failed", err
-			else
-				console.log "Authenticated successfully with payload:", auth_data
-				create_new_document(auth_data.uid)
+	sign_in_if_needed(create_new_document)
 
 
 $last = null
@@ -89,7 +96,7 @@ $Node = (data, fb_n)->
 	data._ ?= ""
 	fb_n ?= fb_nodes.push(data)
 	
-	return if $nodes_by_key[fb_n.key()]
+	return if $nodes_by_key[fb_n.key]
 	
 	cleanup = ->
 		if $last and $last isnt $node
@@ -131,7 +138,7 @@ $Node = (data, fb_n)->
 			cleanup()
 			$last = $node
 	
-	$nodes_by_key[fb_n.key()] = $node
+	$nodes_by_key[fb_n.key] = $node
 	
 	$node.reposition = ->
 		$node.css
@@ -185,7 +192,7 @@ $Node = (data, fb_n)->
 fb_nodes.on 'child_added', (snapshot)->
 	# setTimeout needed for deduplication logic
 	setTimeout ->
-		$Node snapshot.val(), snapshot.ref()
+		$Node snapshot.val(), snapshot.ref
 
 fb_doc.once 'value', (snapshot)->
 	# setTimeout needed because of the above one

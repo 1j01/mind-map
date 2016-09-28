@@ -9,8 +9,19 @@
 		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 		<link rel="stylesheet" href="https://code.getmdl.io/1.1.1/material.amber-blue.min.css">
 		<script defer src="https://code.getmdl.io/1.1.1/material.min.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/3.4.1/firebase.js"></script>
+		<script>
+			// Initialize Firebase
+			var config = {
+				apiKey: "AIzaSyAz_Pu0oWNJjqYrB5AFrMp6Jv-eHcX4ngk",
+				authDomain: "mind-map.firebaseapp.com",
+				databaseURL: "https://mind-map.firebaseio.com",
+				storageBucket: "firebase-mind-map.appspot.com",
+				messagingSenderId: "1046811900913"
+			};
+			firebase.initializeApp(config);
+		</script>
 		<script src="lib/jquery.js"></script>
-		<script src="lib/firebase.js"></script>
 		<script src="lib/coffee-script.js"></script>
 		<script src="app.coffee" type="text/coffeescript"></script>
 	</head>
