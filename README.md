@@ -45,7 +45,7 @@ Less distracting UI means a stronger focus on content.
 * Mobile support
 * Optimize app load time
 * Rename repo
-* Maybe add a mindmap minimap to Minmap
+* Maybe add a mind map minimap to the Minmap mind mapping app
 
 [app]: http://1j01.github.io/mind-map/?mind-map
 [Why ContentEditable is Terrible]: https://medium.com/medium-eng/why-contenteditable-is-terrible-122d8a40e480
