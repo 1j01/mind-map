@@ -281,6 +281,6 @@ if location.hostname.match(/localhost|127\.0\.0\.1/) or location.protocol is 'fi
 	if localStorage.debug
 		document.body.classList.add('debug')
 else
-	child(fb, 'stats/v2_views').transaction (val)-> (val or 0) + 1
+	runTransaction(child(fb, 'stats/v3_views'), (val)-> (val or 0) + 1)
 	unless doc_name is 'document'
-		child(fb, 'stats/v2_non_default_views').transaction (val)-> (val or 0) + 1
+		runTransaction(child(fb, 'stats/v3_non_default_views'), (val)-> (val or 0) + 1)

@@ -12,7 +12,7 @@
 		<script type="module">
 			import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-app.js";
 			import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-auth.js";
-			import { getDatabase, ref, set, push, remove, child, onValue, onChildAdded, onDisconnect } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-database.js";
+			import { getDatabase, ref, set, push, remove, runTransaction, child, onValue, onChildAdded, onDisconnect } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-database.js";
 			
 			const firebaseConfig = {
 				apiKey: "AIzaSyAz_Pu0oWNJjqYrB5AFrMp6Jv-eHcX4ngk",
@@ -35,6 +35,7 @@
 			window.set = set;
 			window.push = push;
 			window.remove = remove;
+			window.runTransaction = runTransaction;
 			window.child = child;
 			window.onValue = onValue;
 			window.onChildAdded = onChildAdded;
