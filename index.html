@@ -13,7 +13,8 @@
 			import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-app.js";
 			import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-auth.js";
 			import { getDatabase, ref, set, push, remove, runTransaction, child, onValue, onChildAdded, onDisconnect } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-database.js";
-			
+			import DOMPurify from "./lib/purify.es.js";
+
 			const firebaseConfig = {
 				apiKey: "AIzaSyAz_Pu0oWNJjqYrB5AFrMp6Jv-eHcX4ngk",
 				authDomain: "mind-map.firebaseapp.com",
@@ -40,6 +41,7 @@
 			window.onValue = onValue;
 			window.onChildAdded = onChildAdded;
 			window.onDisconnect = onDisconnect;
+			window.DOMPurify = DOMPurify;
 		</script>
 		<script src="lib/jquery.js"></script>
 		<script src="lib/coffeescript.js"></script>

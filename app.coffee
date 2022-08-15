@@ -153,6 +153,7 @@ $Node = (data, fb_n)->
 	
 	$node.content = (html)->
 		if typeof html is 'string'
+			html = DOMPurify.sanitize(html)
 			previous_content = html
 			unless $node.html() is html
 				$node.html(html)

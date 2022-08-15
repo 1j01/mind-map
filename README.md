@@ -21,7 +21,6 @@ Less distracting UI means a stronger focus on content.
 	* Links (pasting plain, creating from existing text, editing existing links...)
 	* Maybe *not* underline: underline is for links
 	* Images (drag and drop to either "upload" or upload)
-* Prevent XSS
 * Use something better than `contenteditable`
 	* [Why ContentEditable is Terrible][]
 	* Still needs to carry undos/redos between nodes
