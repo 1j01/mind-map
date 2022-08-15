@@ -79,7 +79,6 @@ create_new_document = (uid)->
 	fb_new_doc = child(fb_docs, new_doc_id)
 	# claimeth thine document!
 	user = auth.currentUser
-	console.log "create_new_document", user, user.uid
 	set(child(fb_new_doc, 'owner_uid'), user.uid)
 	.then ->
 		# and go to it!
@@ -104,7 +103,6 @@ $Node = (data, fb_n)->
 	return if $nodes_by_key[fb_n.key]
 	
 	cleanup = ->
-		console.trace("cleanup", $last?[0], $last?.isEmpty(), $last isnt $node, $last?.is($node))
 		if $last and ($last isnt $node)
 			if $last.isEmpty()
 				$last.remove() # overridden to delete the node from firebase
@@ -151,9 +149,7 @@ $Node = (data, fb_n)->
 	
 	$node.content = (html)->
 		if typeof html is 'string'
-			console.log("before", html)
 			html = DOMPurify.sanitize(html)
-			console.log("after", html)
 			previous_content = html
 			unless $node.html() is html
 				$node.html(html)
@@ -167,7 +163,6 @@ $Node = (data, fb_n)->
 		$node.text().match(/^\s*$/)?
 	
 	$node.remove = ->
-		console.log("remove", $node)
 		# $node.remove() would cause infinite recursion; deleting the node from firebase will cause it to be removed from the DOM
 		# delete $nodes_by_key[fb_n.key] wouldn't let the firebase listener remove it from the DOM (I think?)
 		remove(fb_n)
@@ -184,7 +179,6 @@ $Node = (data, fb_n)->
 	
 	onValue fb_n, (snapshot)->
 		value = snapshot.val()
-		console.log("onValue", value)
 		if value
 			data = value
 		else
