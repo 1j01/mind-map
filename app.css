@@ -118,7 +118,9 @@ header > .mdl-layout__header-row {
 	font-size: 1rem;
 }
 #new-document {
-	padding: 0.2rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	margin: 0.2rem;
 	margin-left: 0.5rem;
 }

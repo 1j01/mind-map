@@ -34,12 +34,10 @@ Less distracting UI means a stronger focus on content.
 * User presence
 	* Cursors and selections
 	* Pointers to where someone is in the document
-* GUI to manage documents
+* UI to manage documents, like a popup menu with a list of documents (maybe including the new document button)
 * Look for new images added, listen for onload and reposition immediately
 * Store history and allow rolling back changes
-* Chrome app
 * Themes
-* Materialize
 * Better font(s)?
 * Mobile support
 * Optimize app load time
