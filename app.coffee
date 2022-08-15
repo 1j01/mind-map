@@ -8,7 +8,6 @@ fb_nodes = child(fb_doc, 'nodes')
 
 auth = getAuth()
 provider = new GoogleAuthProvider()
-user = null
 
 onAuthStateChanged getAuth(), (user)->
 	if user
@@ -28,14 +27,13 @@ onAuthStateChanged getAuth(), (user)->
 sign_in = (signed_in_callback)->
 	signInWithPopup(getAuth(), provider)
 		.then (auth_data)->
-			{user} = auth_data
 			signed_in_callback?()
 			console?.log? "Authenticated successfully with payload:", auth_data
 		.catch (err)->
-				console?.log? "Sign in failed", err
+			console?.log? "Sign in failed", err
 
 sign_in_if_needed = (signed_in_callback)->
-	if user?
+	if auth.currentUser?
 		signed_in_callback()
 	else
 		sign_in(signed_in_callback)
@@ -80,15 +78,16 @@ create_new_document = (uid)->
 	new_doc_id = generate_id()
 	fb_new_doc = child(fb_docs, new_doc_id)
 	# claimeth thine document!
+	user = auth.currentUser
 	console.log "create_new_document", user, user.uid
-	set child(fb_new_doc, 'owner_uid'), user.uid, (err)->
-		if err
-			# TODO: visible notifications for these sorts of errors
-			console.error "Failed to create new document", err
-		else
-			# and go to it!
-			location.search = new_doc_id
-			# in the future, once the editor is a component, we can use the history API to switch documents
+	set(child(fb_new_doc, 'owner_uid'), user.uid)
+	.then ->
+		# and go to it!
+		location.search = new_doc_id
+		# in the future, once the editor is a component, we can use the history API to switch documents
+	.catch (err)->
+		# TODO: visible notifications for these sorts of errors
+		console.error "Failed to create new document", err
 
 $('#new-document').on 'click', (e)->
 	sign_in_if_needed(create_new_document)
