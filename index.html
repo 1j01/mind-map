@@ -9,17 +9,36 @@
 		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 		<link rel="stylesheet" href="https://code.getmdl.io/1.1.1/material.amber-blue.min.css">
 		<script defer src="https://code.getmdl.io/1.1.1/material.min.js"></script>
-		<script src="https://www.gstatic.com/firebasejs/3.4.1/firebase.js"></script>
-		<script>
-			// Initialize Firebase
-			var config = {
+		<script type="module">
+			import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-app.js";
+			import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-auth.js";
+			import { getDatabase, ref, set, push, remove, child, onValue, onChildAdded, onDisconnect } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-database.js";
+			
+			const firebaseConfig = {
 				apiKey: "AIzaSyAz_Pu0oWNJjqYrB5AFrMp6Jv-eHcX4ngk",
 				authDomain: "mind-map.firebaseapp.com",
 				databaseURL: "https://mind-map.firebaseio.com",
+				projectId: "firebase-mind-map",
 				storageBucket: "firebase-mind-map.appspot.com",
-				messagingSenderId: "1046811900913"
+				messagingSenderId: "1046811900913",
+				appId: "1:1046811900913:web:40ff3f7f3a953968172250"
 			};
-			firebase.initializeApp(config);
+			
+			const app = initializeApp(firebaseConfig);
+
+			window.getAuth = getAuth;
+			window.onAuthStateChanged = onAuthStateChanged;
+			window.signInWithPopup = signInWithPopup;
+			window.GoogleAuthProvider = GoogleAuthProvider;
+			window.getDatabase = getDatabase;
+			window.ref = ref;
+			window.set = set;
+			window.push = push;
+			window.remove = remove;
+			window.child = child;
+			window.onValue = onValue;
+			window.onChildAdded = onChildAdded;
+			window.onDisconnect = onDisconnect;
 		</script>
 		<script src="lib/jquery.js"></script>
 		<script src="lib/coffeescript.js"></script>

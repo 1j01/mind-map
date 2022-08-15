@@ -1,26 +1,32 @@
 
 doc_name = (location.search or 'document').replace("?", "")
-fb = firebase.database().ref()
-fb_docs = fb.child('documents')
-fb_doc = fb_docs.child(doc_name)
-fb_nodes = fb_doc.child('nodes')
+db = getDatabase()
+fb = ref(db)
+fb_docs = child(fb, 'documents')
+fb_doc = child(fb_docs, doc_name)
+fb_nodes = child(fb_doc, 'nodes')
 
-auth = firebase.auth()
-provider = new firebase.auth.GoogleAuthProvider()
+auth = getAuth()
+provider = new GoogleAuthProvider()
 user = null
 
-auth.onAuthStateChanged (auth_data)->
-	if auth_data
+onAuthStateChanged getAuth(), (user)->
+	if user
+		{ displayName, photoURL } = user
+		for profile in user.providerData
+			displayName ?= profile.displayName
+			photoURL ?= profile.photoURL
+		
 		$('#sign-in').hide()
 		$('#signed-in').show()
-		$('#user-name').text auth_data.google.displayName
-		$('#user-image').attr(src: auth_data.google.profileImageURL)
+		$('#user-name').text displayName ? ""
+		$('#user-image').attr(src: photoURL)
 	else
 		$('#signed-in').hide()
 		$('#sign-in').show()
 
 sign_in = (signed_in_callback)->
-	auth.signInWithPopup(provider)
+	signInWithPopup(getAuth(), provider)
 		.then (auth_data)->
 			{user} = auth_data
 			signed_in_callback?()
@@ -41,12 +47,12 @@ $('#sign-out').on 'click', (e)->
 	auth.signOut()
 
 $doc_title_input = $('#document-title-input')
-fb_doc_title = fb_doc.child('title')
+fb_doc_title = child(fb_doc, 'title')
 
 $doc_title_input.on 'input', (e)->
-	fb_doc_title.set $doc_title_input.val()
+	set(fb_doc_title, $doc_title_input.val())
 
-fb_doc_title.on 'value', (snapshot)->
+onValue fb_doc_title, (snapshot)->
 	unless $doc_title_input.val() is snapshot.val()
 		$doc_title_input.val(snapshot.val())
 		$doc_title_input.parent().addClass('is-dirty') if $doc_title_input.val()
@@ -72,10 +78,10 @@ generate_id = (len=40)->
 
 create_new_document = (uid)->
 	new_doc_id = generate_id()
-	fb_new_doc = fb_docs.child(new_doc_id)
+	fb_new_doc = child(fb_docs, new_doc_id)
 	# claimeth thine document!
 	console.log "create_new_document", user, user.uid
-	fb_new_doc.child('owner_uid').set user.uid, (err)->
+	set child(fb_new_doc, 'owner_uid'), user.uid, (err)->
 		if err
 			# TODO: visible notifications for these sorts of errors
 			console.error "Failed to create new document", err
@@ -94,7 +100,7 @@ $nodes_by_key = {}
 $Node = (data, fb_n)->
 	
 	data._ ?= ""
-	fb_n ?= fb_nodes.push(data)
+	fb_n ?= push(fb_nodes, data)
 	
 	return if $nodes_by_key[fb_n.key]
 	
@@ -126,10 +132,11 @@ $Node = (data, fb_n)->
 			setTimeout $node.reposition
 			content = $node.content()
 			if previous_content isnt content
-				fb_n.set
+				set(fb_n, {
 					x: data.x
 					y: data.y
 					_: content
+				})
 			previous_content = content
 		.on 'mousedown', (e)->
 			cleanup()
@@ -160,7 +167,7 @@ $Node = (data, fb_n)->
 		$node.text().match(/^\s*$/)?
 	
 	$node.remove = ->
-		fb_n.remove()
+		remove(fb_n)
 	
 	$node.hide = ->
 		$node.css
@@ -172,7 +179,7 @@ $Node = (data, fb_n)->
 			opacity: ''
 			pointerEvents: ''
 	
-	fb_n.on 'value', (snapshot)->
+	onValue fb_n, (snapshot)->
 		value = snapshot.val()
 		if value
 			data = value
@@ -182,19 +189,19 @@ $Node = (data, fb_n)->
 		$node.reposition()
 		if data._
 			$node.show()
-			fb_n.onDisconnect().cancel()
+			onDisconnect(fb_n).cancel()
 		else
 			$node.hide() unless value?
-			fb_n.onDisconnect().remove()
+			onDisconnect(fb_n).remove()
 	
 	$node
 
-fb_nodes.on 'child_added', (snapshot)->
+onChildAdded fb_nodes, (snapshot)->
 	# setTimeout needed for deduplication logic
 	setTimeout ->
 		$Node snapshot.val(), snapshot.ref
 
-fb_doc.once 'value', (snapshot)->
+onValue(fb_doc, (snapshot)->
 	# setTimeout needed because of the above one
 	setTimeout ->
 		unless $('.node:not(:empty)').length
@@ -204,6 +211,7 @@ fb_doc.once 'value', (snapshot)->
 			).focus()
 		# What about when two people open up a new document?
 		# Should we focus an existing sole empty node?
+, { onlyOnce: true })
 
 $doc_content = $('#document-content')
 
@@ -274,6 +282,6 @@ if location.hostname.match(/localhost|127\.0\.0\.1/) or location.protocol is 'fi
 	if localStorage.debug
 		document.body.classList.add('debug')
 else
-	fb.child('stats/v2_views').transaction (val)-> (val or 0) + 1
+	child(fb, 'stats/v2_views').transaction (val)-> (val or 0) + 1
 	unless doc_name is 'document'
-		fb.child('stats/v2_non_default_views').transaction (val)-> (val or 0) + 1
+		child(fb, 'stats/v2_non_default_views').transaction (val)-> (val or 0) + 1
