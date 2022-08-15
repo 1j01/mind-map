@@ -104,17 +104,15 @@ $Node = (data, fb_n)->
 	return if $nodes_by_key[fb_n.key]
 	
 	cleanup = ->
-		if $last and $last isnt $node
-			if $last and $last.isEmpty()
-				$last.remove()
+		console.trace("cleanup", $last?[0], $last?.isEmpty(), $last isnt $node, $last?.is($node))
+		if $last and ($last isnt $node)
+			if $last.isEmpty()
+				$last.remove() # overridden to delete the node from firebase
 			$last = null
-	
-	if $last and $last.isEmpty()
-		$last.remove()
 	
 	previous_content = ''
 	
-	$node = $last = $('<div contenteditable class="node"></div>')
+	$node = $('<div contenteditable class="node"></div>')
 		.appendTo('#document-content')
 		.css
 			position: 'absolute'
@@ -153,7 +151,9 @@ $Node = (data, fb_n)->
 	
 	$node.content = (html)->
 		if typeof html is 'string'
+			console.log("before", html)
 			html = DOMPurify.sanitize(html)
+			console.log("after", html)
 			previous_content = html
 			unless $node.html() is html
 				$node.html(html)
@@ -167,6 +167,9 @@ $Node = (data, fb_n)->
 		$node.text().match(/^\s*$/)?
 	
 	$node.remove = ->
+		console.log("remove", $node)
+		# $node.remove() would cause infinite recursion; deleting the node from firebase will cause it to be removed from the DOM
+		# delete $nodes_by_key[fb_n.key] wouldn't let the firebase listener remove it from the DOM (I think?)
 		remove(fb_n)
 	
 	$node.hide = ->
@@ -181,6 +184,7 @@ $Node = (data, fb_n)->
 	
 	onValue fb_n, (snapshot)->
 		value = snapshot.val()
+		console.log("onValue", value)
 		if value
 			data = value
 		else
