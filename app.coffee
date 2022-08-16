@@ -244,7 +244,7 @@ view_offset =
 			# transform: "translate3d(#{view_offset.x.toFixed(3)}px, #{view_offset.y.toFixed(3)}px, 0px)"
 			# backfaceVisibility: "hidden"
 
-# TODO: try to allow linuxy clipboarding but still allow MMB dragging even on nodes?
+mmb_panning = no
 $('#document-background, #document-content').on 'mousedown', (e)->
 	unless $(e.target).closest('.node').length and e.button isnt 1 # MMB
 		e.preventDefault()
@@ -268,13 +268,19 @@ $('#document-background, #document-content').on 'mousedown', (e)->
 			end_drag_velocity.vx += (view_offset.x - prev_view_offset_x) * 0.3
 			end_drag_velocity.vy += (view_offset.y - prev_view_offset_y) * 0.3
 			view_offset.start_animating()
+			mmb_panning = yes if e.buttons & 4 # MMB (e.button is not applicable to mousemove)
 		$(window).on 'mouseup', mouseup = (e)->
 			$(window).off 'mousemove', mousemove
 			$(window).off 'mouseup', mouseup
+			setTimeout((-> mmb_panning = no), 1) # time for paste to happen on Linux
 			unless e.button is 2 # RMB
 				view_offset.vx = end_drag_velocity.vx
 				view_offset.vy = end_drag_velocity.vy
 				view_offset.start_animating()
+
+$('#document-content').on 'paste', (e)->
+	if mmb_panning
+		e.preventDefault()
 
 if location.hostname.match(/localhost|127\.0\.0\.1/) or location.protocol is 'file:'
 	if localStorage.debug
