@@ -246,7 +246,8 @@ view_offset =
 
 mmb_panning = no
 $('#document-background, #document-content').on 'mousedown', (e)->
-	unless $(e.target).closest('.node').length and e.button isnt 1 # MMB
+	outside_any_node = $(e.target).closest('.node').length is 0
+	if outside_any_node or e.button is 1 # MMB
 		e.preventDefault()
 		unless e.button is 1 # MMB
 			$Node(
