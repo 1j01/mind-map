@@ -254,6 +254,9 @@ $('#document-background, #document-content').on 'mousedown', (e)->
 				x: e.pageX - view_offset.x
 				y: e.pageY - view_offset.y
 			).focus()
+		if e.button not in [0, 1] # LMB or MMB
+			return # don't allow dragging with RMB because system context menus can't work consistently with it
+			# (on some systems, it will pan only once closing the context menu, which is a bad experience)
 		view_offset.start_animating()
 		drag_start_offset.x = view_offset.x - e.pageX
 		drag_start_offset.y = view_offset.y - e.pageY
@@ -274,10 +277,9 @@ $('#document-background, #document-content').on 'mousedown', (e)->
 			$(window).off 'mousemove', mousemove
 			$(window).off 'mouseup', mouseup
 			setTimeout((-> mmb_panning = no), 1) # time for paste to happen on Linux
-			unless e.button is 2 # RMB
-				view_offset.vx = end_drag_velocity.vx
-				view_offset.vy = end_drag_velocity.vy
-				view_offset.start_animating()
+			view_offset.vx = end_drag_velocity.vx
+			view_offset.vy = end_drag_velocity.vy
+			view_offset.start_animating()
 
 $('#document-content').on 'paste', (e)->
 	if mmb_panning
