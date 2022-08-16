@@ -105,7 +105,7 @@ $Node = (data, fb_n)->
 	cleanup = ->
 		if $last and ($last isnt $node)
 			if $last.isEmpty()
-				$last.remove() # overridden to delete the node from firebase
+				$last.deleteFromDatabase()
 			$last = null
 	
 	previous_content = ''
@@ -162,8 +162,8 @@ $Node = (data, fb_n)->
 		return no if $node.find('img, audio, video, iframe').length
 		$node.text().match(/^\s*$/)?
 	
-	$node.remove = ->
-		# $node.remove() would cause infinite recursion; deleting the node from firebase will cause it to be removed or hidden
+	$node.deleteFromDatabase = ->
+		# $node.remove() I'm keeping nodes in the DOM, just hidden (I don't remember why)
 		# delete $nodes_by_key[fb_n.key] might cause a new node to be created instead of reusing a hidden one
 		remove(fb_n)
 	
