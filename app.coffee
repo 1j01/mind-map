@@ -163,8 +163,8 @@ $Node = (data, fb_n)->
 		$node.text().match(/^\s*$/)?
 	
 	$node.remove = ->
-		# $node.remove() would cause infinite recursion; deleting the node from firebase will cause it to be removed from the DOM
-		# delete $nodes_by_key[fb_n.key] wouldn't let the firebase listener remove it from the DOM (I think?)
+		# $node.remove() would cause infinite recursion; deleting the node from firebase will cause it to be removed or hidden
+		# delete $nodes_by_key[fb_n.key] might cause a new node to be created instead of reusing a hidden one
 		remove(fb_n)
 	
 	$node.hide = ->
