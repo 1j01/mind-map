@@ -151,7 +151,7 @@ $Node = (data, fb_n)->
 		if typeof html is 'string'
 			html = DOMPurify.sanitize(html)
 			previous_content = html
-			unless $node.html() is html
+			unless DOMPurify.sanitize($node.html()) is html
 				$node.html(html)
 			$node.reposition()
 			$node
